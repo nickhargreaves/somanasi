@@ -91,6 +91,7 @@ public class FBLoginFragment extends Fragment {
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivity().startActivity(i);
+            getActivity().finish();
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }
