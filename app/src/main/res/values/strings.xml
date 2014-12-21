@@ -2,9 +2,11 @@
 <resources>
 
     <string name="app_name">Somanami</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Library</string>
+    <string name="title_section2">My Books</string>
+    <string name="title_section3">Tray</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_add">Add</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>

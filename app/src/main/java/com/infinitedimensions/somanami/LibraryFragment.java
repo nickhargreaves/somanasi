@@ -62,7 +62,7 @@ public class LibraryFragment extends Fragment {
 
 
             //Add thumbnail
-            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), "http://mbabullshit.com/blog/wp-content/uploads/2011/07/book.png");
+            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), "http://bookriotcom.c.presscdn.com/wp-content/uploads/2013/06/war-of-the-worlds-cover-by-kjell-roger-ringstad-686x1024.jpg");
 
             thumbnail.setExternalUsage(true);
             //thumbnail.setUrlResource(content.getThumb_url());

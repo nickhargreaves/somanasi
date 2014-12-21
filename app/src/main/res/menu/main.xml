@@ -2,11 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity" >
-    <item android:id="@+id/action_example"
-        android:title="@string/action_example"
-        app:showAsAction="withText|ifRoom" />
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_add"
+        android:title="@string/action_add"
+        android:icon="@drawable/add"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_filter"
+        android:title="@string/action_filter"
+        android:icon="@drawable/filter_light"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
 </menu>
