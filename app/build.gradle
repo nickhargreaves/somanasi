@@ -28,4 +28,6 @@ dependencies {
     //Optional for built-in cards
     compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.0.1'
     compile 'com.squareup.picasso:picasso:2.4.0'
+    //
+    compile 'com.facebook.android:facebook-android-sdk:3.21.1'
 }
