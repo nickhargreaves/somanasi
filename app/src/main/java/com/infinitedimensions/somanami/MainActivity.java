@@ -1,5 +1,6 @@
 package com.infinitedimensions.somanami;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -96,10 +97,21 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add) {
+
+            addDialog();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addDialog(){
+        Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setTitle("Add your book");
+        dialog.setContentView(R.layout.dialog_add);
+
+        dialog.show();
     }
 
     @Override

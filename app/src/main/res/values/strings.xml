@@ -17,6 +17,10 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="add_book_alert">Enter book search terms like title and author</string>
     <string name="app_id">454314344707288</string>
+    <string name="add_book">Search</string>
+    <string name="add_book_cancel">Cancel</string>
+
+    <string name="add_book_placeholder">Search terms</string>
 </resources>
