@@ -1,5 +1,6 @@
 package com.infinitedimensions.somanami;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.facebook.AppEventsLogger;
+import com.facebook.Session;
 
 
 public class MainActivity extends ActionBarActivity
@@ -41,23 +43,28 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, LibraryFragment.newInstance(position + 1))
-                .commit();
+        if (position == 3) {
+            callFacebookLogout(getApplicationContext());
+        } else {
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, LibraryFragment.newInstance(position + 1))
+                    .commit();
+
+        }
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getResources().getStringArray(R.array.nav_items)[0];
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getResources().getStringArray(R.array.nav_items)[1];
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getResources().getStringArray(R.array.nav_items)[2];
                 break;
         }
     }
@@ -103,4 +110,28 @@ public class MainActivity extends ActionBarActivity
         AppEventsLogger.activateApp(this);
     }
 
+    /**
+     * Logout From Facebook
+     */
+    public void callFacebookLogout(Context context) {
+        Session session = Session.getActiveSession();
+        if (session != null) {
+
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        } else {
+
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+
+        }
+
+       finish();
+
+    }
 }
