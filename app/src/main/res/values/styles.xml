@@ -87,7 +87,7 @@
     </style>
 
     <style name="card.native.header_simple_title" >
-        <item name="android:textSize">@dimen/card_header_native_simple_title_text_size</item>
+        <item name="android:textSize">@dimen/card_header_simple_title_text_size</item>
         <item name="android:textColor">@color/golden</item>
         <item name="android:fontFamily">sans-serif-thin"></item>
         <item name="android:layout_gravity">left|center_vertical</item>

@@ -1,6 +1,5 @@
 package com.infinitedimensions.somanami;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -12,7 +11,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.ActionBar;
+import android.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -46,7 +46,7 @@ import it.gmariotti.cardslib.library.view.CardGridView;
 /**
  * Created by nick on 12/23/14.
  */
-public class AddBook extends Activity {
+public class AddBook extends ActionBarActivity {
 
     String query;
     List<Book> contentList;
@@ -81,6 +81,12 @@ public class AddBook extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_book);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         query = getIntent().getStringExtra("query");
 
@@ -269,7 +275,8 @@ public class AddBook extends Activity {
                 Card card = new Card(getApplicationContext());
 
                 //Create a CardHeader
-                CardHeader header = new CardHeader(getApplicationContext());
+                CustomHeaderInnerCard header = new CustomHeaderInnerCard(getApplicationContext());
+
 
                 //
                 String str = content.getTitle();
@@ -278,7 +285,6 @@ public class AddBook extends Activity {
                     str = str.substring(0, 50) + "...";
 
                 header.setTitle(str);
-
 
                 //Add Header to card
                 card.addCardHeader(header);
@@ -316,6 +322,8 @@ public class AddBook extends Activity {
 
         }
     }
+
+
     public class CustomThumbCard extends CardThumbnail {
         private String imageSource;
         private Context ctx;
@@ -348,4 +356,25 @@ public class AddBook extends Activity {
         }
     }
 
+
+    public class CustomHeaderInnerCard extends CardHeader {
+
+        public CustomHeaderInnerCard(Context context) {
+            super(context, R.layout.card_inner_header);
+        }
+
+        @Override
+        public void setupInnerViewElements(ViewGroup parent, View view) {
+
+            if (view!=null){
+                TextView t1 = (TextView) view.findViewById(R.id.title);
+                if (t1!=null)
+                    t1.setText("nyef");
+
+                TextView t2 = (TextView) view.findViewById(R.id.subtitle);
+                if (t2!=null)
+                    t2.setText("nyefnyef");
+            }
+        }
+    }
 }

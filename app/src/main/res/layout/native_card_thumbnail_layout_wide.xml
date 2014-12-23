@@ -57,7 +57,6 @@
                 android:layout_width="match_parent"
                 card:card_header_layout_resourceID="@layout/native_base_header_layout"
                 android:layout_height="match_parent"/>
-
             <!-- Main Content View -->
             <FrameLayout
                 android:id="@+id/card_main_content_layout"
