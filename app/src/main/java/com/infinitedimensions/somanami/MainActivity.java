@@ -125,9 +125,17 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View view){
                 Intent i = new Intent(getApplicationContext(), AddBook.class);
-                String query = ((TextView)dialog.findViewById(R.id.eTSearch)).getText().toString();
+                TextView tvQuery = (TextView)dialog.findViewById(R.id.eTSearch);
+
+                if (BuildConfig.DEBUG) {
+                    tvQuery.setText("Chaos");
+                }
+
+                String query = (tvQuery).getText().toString();
+
                 i.putExtra("query", query);
                 startActivity(i);
+                dialog.cancel();
             }
         });
 

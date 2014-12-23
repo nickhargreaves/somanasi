@@ -20,6 +20,7 @@ public class Book {
     private String date;
     private String url;
 
+    public String getId(){return this.id;}
     public String getThumb_url(){
         return this.thumb_url;
     }

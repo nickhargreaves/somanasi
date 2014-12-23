@@ -1,9 +1,11 @@
 package com.infinitedimensions.somanami;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +13,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -77,6 +78,9 @@ public class AddBook extends ActionBarActivity {
 
     SharedPreferences.Editor editor;
     CardGridView gridView;
+
+    String user_id = "0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,6 +199,89 @@ public class AddBook extends ActionBarActivity {
                     })
                     .create();
         }
+    }
+    class AddThisBook extends AsyncTask<String, String, String> {
+
+        private String id;
+        private ProgressDialog pDialog;
+
+        private AddThisBook(String id){
+            this.id = id;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pDialog = new ProgressDialog(AddBook.this);
+            pDialog.setMessage("Adding book ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            try {
+                String url = Defaults.API_URL + "public/addbook/"+ URLEncoder.encode(id) + "/" + URLEncoder.encode(user_id);// +"/" + location;
+                HttpResponse response = httpClient
+                        .execute(new HttpGet(url));
+
+                InputStream is = response.getEntity().getContent();
+                JsonFactory factory = new JsonFactory();
+
+                JsonParser jsonParser = factory.createJsonParser(is);
+
+                JsonToken token = jsonParser.nextToken();
+
+                Log.d("jsonresult", "js: "+ token);
+
+
+                // Expected JSON is an array so if current token is "[" then while
+                // we don't get
+                // "]" we will keep parsing
+                //if (token == JsonToken.START_ARRAY) {
+                   // while (token != JsonToken.END_ARRAY) {
+                        // Inside array there are many objects, so it has to start
+                        // with "{" and end with "}"
+                        token = jsonParser.nextToken();
+                        //if (token == JsonToken.FIELD_NAME) {
+
+                            Log.d("jsonresult", "so: " + jsonParser.getCurrentName());
+
+                            while (token != JsonToken.END_OBJECT) {
+                                // Each object has a name which we will use to
+                                // identify the type.
+                                token = jsonParser.nextToken();
+                                if (token == JsonToken.FIELD_NAME) {
+                                    String objectName = jsonParser.getCurrentName();
+                                    // jsonParser.nextToken();
+                                    Log.d("jsonresult", jsonParser.toString());
+                                    if (0 == objectName.compareToIgnoreCase("status")) {
+                                        //fuck it I'll come back to this
+                                    }else{
+
+                                    }
+                                }
+                            }
+                       // }
+                   // }
+
+                //}
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String file) {
+            Toast.makeText(getApplicationContext(), "Added successfully!", Toast.LENGTH_LONG).show();
+            pDialog.dismiss();
+            finish();
+        }
+
     }
     class getContent extends AsyncTask<String, String, String> {
         @Override
@@ -315,6 +402,7 @@ public class AddBook extends ActionBarActivity {
                         builder1.setPositiveButton("Yes",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
+                                        new AddThisBook(content.getId()).execute();
                                         dialog.cancel();
                                     }
                                 });
