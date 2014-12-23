@@ -1,21 +1,28 @@
 package com.infinitedimensions.somanami;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 public class FBLoginFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     private UiLifecycleHelper uiHelper;
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -30,6 +37,10 @@ public class FBLoginFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.facebook_login, container, false);
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        editor = pref.edit();
 
         LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
         authButton.setFragment(this);
@@ -88,6 +99,21 @@ public class FBLoginFragment extends Fragment {
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
+
+            // Request user data and show the results
+            Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (user != null) {
+                        // Display the parsed user info
+                        editor.putString("user_id", user.getId());
+                        editor.putString("name", user.getName());
+                        editor.commit();
+                    }
+                }
+            });
+
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivity().startActivity(i);

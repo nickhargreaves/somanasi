@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -81,6 +82,8 @@ public class AddBook extends ActionBarActivity {
 
     String user_id = "0";
 
+    private SharedPreferences pref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,10 @@ public class AddBook extends ActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         setTitle("Add Book");
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        user_id = pref.getString("user_id", "0");
 
         query = getIntent().getStringExtra("query");
 
