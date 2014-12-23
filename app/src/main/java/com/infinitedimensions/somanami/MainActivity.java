@@ -2,6 +2,7 @@ package com.infinitedimensions.somanami;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -9,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.AppEventsLogger;
 import com.facebook.Session;
@@ -107,9 +110,26 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void addDialog(){
-        Dialog dialog = new Dialog(MainActivity.this);
+        final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setTitle("Add your book");
         dialog.setContentView(R.layout.dialog_add);
+        //set onclicklisteners
+        dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(getApplicationContext(), AddBook.class);
+                String query = ((TextView)dialog.findViewById(R.id.eTSearch)).getText().toString();
+                i.putExtra("query", query);
+                startActivity(i);
+            }
+        });
 
         dialog.show();
     }
