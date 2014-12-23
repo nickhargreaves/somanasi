@@ -100,19 +100,18 @@ public class FBLoginFragment extends Fragment {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
 
-            // Request user data and show the results
-            Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+            Request.newMeRequest(session, new Request.GraphUserCallback() {
 
+                // callback after Graph API response with user object
                 @Override
                 public void onCompleted(GraphUser user, Response response) {
                     if (user != null) {
-                        // Display the parsed user info
                         editor.putString("user_id", user.getId());
                         editor.putString("name", user.getName());
                         editor.commit();
                     }
                 }
-            });
+            }).executeAsync();
 
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
