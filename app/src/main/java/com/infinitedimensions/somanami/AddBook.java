@@ -87,6 +87,7 @@ public class AddBook extends ActionBarActivity {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        setTitle("Add Book");
 
         query = getIntent().getStringExtra("query");
 
@@ -249,7 +250,6 @@ public class AddBook extends ActionBarActivity {
                         }
                     }
 
-
                 }
             } catch (Exception e) {
 
@@ -264,7 +264,13 @@ public class AddBook extends ActionBarActivity {
             stackSize = contentList.size();
 
             if(stackSize==0){
+
                 Toast.makeText(getApplicationContext(), "No items found!", Toast.LENGTH_SHORT).show();
+
+            }else{
+
+                setTitle("Click on a book to add");
+
             }
 
             for(int i = 0; i<contentList.size(); i++) {
@@ -275,8 +281,7 @@ public class AddBook extends ActionBarActivity {
                 Card card = new Card(getApplicationContext());
 
                 //Create a CardHeader
-                CustomHeaderInnerCard header = new CustomHeaderInnerCard(getApplicationContext());
-
+                CustomHeaderInnerCard header = new CustomHeaderInnerCard(getApplicationContext(), content.getTitle(), content.getAuthors());
 
                 //
                 String str = content.getTitle();
@@ -304,7 +309,24 @@ public class AddBook extends ActionBarActivity {
                     @Override
                     public void onClick(Card card, View view) {
                         //Add to DB
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(AddBook.this);
+                        builder1.setMessage("Are you sure?");
+                        builder1.setCancelable(true);
+                        builder1.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        builder1.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
 
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
                     }
                 });
 
@@ -359,8 +381,13 @@ public class AddBook extends ActionBarActivity {
 
     public class CustomHeaderInnerCard extends CardHeader {
 
-        public CustomHeaderInnerCard(Context context) {
+        private String title;
+        private String authors;
+
+        public CustomHeaderInnerCard(Context context, String _title, String _authors) {
             super(context, R.layout.card_inner_header);
+            this.title = _title;
+            this.authors = _authors;
         }
 
         @Override
@@ -369,11 +396,11 @@ public class AddBook extends ActionBarActivity {
             if (view!=null){
                 TextView t1 = (TextView) view.findViewById(R.id.title);
                 if (t1!=null)
-                    t1.setText("nyef");
+                    t1.setText(title);
 
                 TextView t2 = (TextView) view.findViewById(R.id.subtitle);
                 if (t2!=null)
-                    t2.setText("nyefnyef");
+                    t2.setText("By: " + authors);
             }
         }
     }

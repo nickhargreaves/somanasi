@@ -16,9 +16,9 @@ public class Book {
 
     private String title;
     private String description;
+    private String authors;
     private String date;
     private String url;
-
 
     public String getThumb_url(){
         return this.thumb_url;
@@ -35,7 +35,7 @@ public class Book {
     public String getUrl(){
         return this.url;
     }
-
+    public String getAuthors(){return this.authors;}
 
     public void setId(String _id){
         this.id = _id;
@@ -73,6 +73,8 @@ public class Book {
                         this.title = parser.getText();
                     }else if (0 == fieldName.compareToIgnoreCase("description")) {
                         this.description = parser.getText();
+                    }else if (0 == fieldName.compareToIgnoreCase("authors")) {
+                        this.authors = parser.getText();
                     }
                 }
             }
