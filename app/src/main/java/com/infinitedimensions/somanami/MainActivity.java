@@ -49,7 +49,15 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         if (position == 3) {
             callFacebookLogout(getApplicationContext());
-        } else {
+
+        }else if(position ==0){
+            //show library
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, LibraryFragment.newInstance(position + 1))
+                    .commit();
+
+        }else {
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -112,7 +120,16 @@ public class MainActivity extends ActionBarActivity
     public void addDialog(){
         final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setTitle("Add your book");
+
+
         dialog.setContentView(R.layout.dialog_add);
+
+        final TextView tvQuery = (TextView)dialog.findViewById(R.id.eTSearch);
+
+        if (BuildConfig.DEBUG) {
+            tvQuery.setText("Chaos");
+        }
+
         //set onclicklisteners
         dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,11 +142,7 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View view){
                 Intent i = new Intent(getApplicationContext(), AddBook.class);
-                TextView tvQuery = (TextView)dialog.findViewById(R.id.eTSearch);
 
-                if (BuildConfig.DEBUG) {
-                    tvQuery.setText("Chaos");
-                }
 
                 String query = (tvQuery).getText().toString();
 

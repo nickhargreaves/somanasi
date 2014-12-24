@@ -241,9 +241,6 @@ public class AddBook extends ActionBarActivity {
 
                 JsonToken token = jsonParser.nextToken();
 
-                Log.d("jsonresult", "js: "+ token);
-
-
                 // Expected JSON is an array so if current token is "[" then while
                 // we don't get
                 // "]" we will keep parsing
@@ -254,7 +251,6 @@ public class AddBook extends ActionBarActivity {
                         token = jsonParser.nextToken();
                         //if (token == JsonToken.FIELD_NAME) {
 
-                            Log.d("jsonresult", "so: " + jsonParser.getCurrentName());
 
                             while (token != JsonToken.END_OBJECT) {
                                 // Each object has a name which we will use to
@@ -263,7 +259,6 @@ public class AddBook extends ActionBarActivity {
                                 if (token == JsonToken.FIELD_NAME) {
                                     String objectName = jsonParser.getCurrentName();
                                     // jsonParser.nextToken();
-                                    Log.d("jsonresult", jsonParser.toString());
                                     if (0 == objectName.compareToIgnoreCase("status")) {
                                         //fuck it I'll come back to this
                                     }else{
@@ -343,7 +338,6 @@ public class AddBook extends ActionBarActivity {
                             }
                         }
                     }
-
                 }
             } catch (Exception e) {
 

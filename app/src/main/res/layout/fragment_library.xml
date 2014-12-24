@@ -1,7 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".MyActivity"
+    android:background="@color/white"
     xmlns:card="http://schemas.android.com/apk/res-auto">
 
     <it.gmariotti.cardslib.library.view.CardGridView
@@ -16,4 +21,28 @@
         card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout"
         android:id="@+id/favoritesGrid"/>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rlLoading">
+        <ImageView
+            android:id="@+id/ivLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivLoading"
+            android:layout_marginTop="10dp"
+            android:text="Gathering awesome stuff..."
+            android:id="@+id/notification"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="#ffa95500"
+            android:textSize="30sp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
