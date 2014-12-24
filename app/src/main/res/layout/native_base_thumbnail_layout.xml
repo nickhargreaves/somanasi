@@ -22,4 +22,5 @@
     android:id="@+id/card_thumbnail_image"
     android:src="@drawable/default_thumb"
     android:scaleType="fitXY"
-    style="@style/card.native.card_thumbnail_image"/>
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"/>

@@ -1,6 +1,5 @@
 package com.infinitedimensions.somanami;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -336,7 +336,6 @@ public class LibraryFragment extends Fragment {
             if (viewImage!=null){
                 //viewImage.getLayoutParams().width=250;
                 //viewImage.getLayoutParams().height=250;
-                Log.d("ctx", "ctx: " + ctx);
                 //Picasso.with(ctx).setDebugging(true);
                 Picasso.with(ctx)
                         .load(imageSource)
@@ -346,7 +345,7 @@ public class LibraryFragment extends Fragment {
 
                 DisplayMetrics metrics=parent.getResources().getDisplayMetrics();
                 viewImage.getLayoutParams().width = ActionBar.LayoutParams.MATCH_PARENT;//(int)(250*metrics.density);
-                viewImage.getLayoutParams().height = (int)(100*metrics.density);
+                viewImage.getLayoutParams().height = (int)(150*metrics.density);
             }
         }
     }
