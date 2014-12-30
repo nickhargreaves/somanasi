@@ -27,6 +27,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class FBLoginFragment extends Fragment {
 
@@ -55,6 +56,7 @@ public class FBLoginFragment extends Fragment {
 
         LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
         authButton.setFragment(this);
+        authButton.setReadPermissions(Arrays.asList("email"));
         //authButton.setReadPermissions(Arrays.asList("user_likes", "user_status"));
 
         return view;
@@ -120,9 +122,10 @@ public class FBLoginFragment extends Fragment {
                         editor.putString("user_id", user.getId());
                         editor.putString("firstname", user.getFirstName());
                         editor.putString("lastname", user.getLastName());
+                        editor.putString("email", user.asMap().get("email").toString());
                         editor.commit();
 
-                        url = Defaults.API_URL + "public/register/" + user.getId() + "/" + user.getFirstName() + "/" + user.getLastName();
+                        url = Defaults.API_URL + "public/register/" + user.getId() + "/" + user.getFirstName() + "/" + user.getLastName() + "/" + user.asMap().get("email");
 
                         //if not registered, register here
                         String reg = pref.getString("reg", "0");
@@ -151,6 +154,7 @@ public class FBLoginFragment extends Fragment {
         protected String doInBackground(String... args) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             try {
+                Log.d("url", "url: " + url);
                 HttpResponse response = httpClient
                         .execute(new HttpGet(url));
 
