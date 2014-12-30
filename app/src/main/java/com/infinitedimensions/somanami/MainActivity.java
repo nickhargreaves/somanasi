@@ -57,11 +57,11 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container, LibraryFragment.newInstance(position + 1))
                     .commit();
 
-        }else {
+        }else if(position ==1){
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, LibraryFragment.newInstance(position + 1))
+                    .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
                     .commit();
 
         }
