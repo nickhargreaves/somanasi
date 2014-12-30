@@ -3,7 +3,6 @@ package com.infinitedimensions.somanami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -322,7 +322,8 @@ public class MyBooksFragment extends Fragment {
                         ft.addToBackStack(null);
 
                         // Create and show the dialog.
-                        DialogFragment newFragment = MyDialogFragment.newInstance(mStackLevel);
+                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url());
+
                         newFragment.show(ft, "dialog");
                     }
                 });
@@ -341,19 +342,28 @@ public class MyBooksFragment extends Fragment {
 
         }
     }
-    public static class MyDialogFragment extends DialogFragment {
-        int mNum;
+    public static class singleBookDialogFragment extends DialogFragment {
+        String description;
+        String authors;
+        String categories;
+        String thumbURL;
+        String title;
 
         /**
          * Create a new instance of MyDialogFragment, providing "num"
          * as an argument.
          */
-        static MyDialogFragment newInstance(int num) {
-            MyDialogFragment f = new MyDialogFragment();
+        static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL) {
+            singleBookDialogFragment f = new singleBookDialogFragment();
 
             // Supply num input as an argument.
             Bundle args = new Bundle();
-            args.putInt("num", num);
+            args.putString("title", _title);
+            args.putString("description", _description);
+            args.putString("authors", _authors);
+            args.putString("categories", _categories);
+            args.putString("thumbURL", _thumbURL);
+
             f.setArguments(args);
 
             return f;
@@ -362,35 +372,35 @@ public class MyBooksFragment extends Fragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            mNum = getArguments().getInt("num");
+            title = getArguments().getString("title");
+            description = getArguments().getString("description");
+            authors = getArguments().getString("authors");
+            categories = getArguments().getString("categories");
+            thumbURL = getArguments().getString("thumbURL");
 
-            // Pick a style based on the num.
-            int style = DialogFragment.STYLE_NORMAL, theme = 0;
-            switch ((mNum-1)%6) {
-                case 1: style = DialogFragment.STYLE_NO_TITLE; break;
-                case 2: style = DialogFragment.STYLE_NO_FRAME; break;
-                case 3: style = DialogFragment.STYLE_NO_INPUT; break;
-                case 4: style = DialogFragment.STYLE_NORMAL; break;
-                case 5: style = DialogFragment.STYLE_NORMAL; break;
-                case 6: style = DialogFragment.STYLE_NO_TITLE; break;
-                case 7: style = DialogFragment.STYLE_NO_FRAME; break;
-                case 8: style = DialogFragment.STYLE_NORMAL; break;
-            }
-            switch ((mNum-1)%6) {
-                case 4: theme = android.R.style.Theme_Holo; break;
-                case 5: theme = android.R.style.Theme_Holo_Light_Dialog; break;
-                case 6: theme = android.R.style.Theme_Holo_Light; break;
-                case 7: theme = android.R.style.Theme_Holo_Light_Panel; break;
-                case 8: theme = android.R.style.Theme_Holo_Light; break;
-            }
-            setStyle(style, theme);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.add_book, container, false);
+            View v = inflater.inflate(R.layout.single_book, container, false);
 
+            getDialog().setTitle(title);
+
+            TextView descTV = (TextView)v.findViewById(R.id.description);
+            TextView authTV = (TextView)v.findViewById(R.id.authors);
+            TextView catTV = (TextView)v.findViewById(R.id.categories);
+            ImageView thumbIV = (ImageView)v.findViewById(R.id.thumbnail);
+
+            descTV.setText(description);
+            authTV.setText("By: " + authors);
+            catTV.setText("Categorized under: " + categories);
+
+            Picasso.with(getActivity())
+                    .load(thumbURL)
+                    .placeholder(R.drawable.default_thumb)
+                    .error(R.drawable.cancel)
+                    .into(thumbIV);
 
             return v;
         }

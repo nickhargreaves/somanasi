@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+<LinearLayout
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+                android:layout_width="130dp"
+                android:layout_height="200dp"
+                android:scaleType="fitCenter"
+                android:id="@+id/thumbnail" />
+
+        <ToggleButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOff="Engaged"
+            android:textOn="Available"
+            android:id="@+id/toggleStatus" />
+
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Authors"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/card_text_color_header"
+            android:textSize="15sp"
+            android:id="@+id/authors" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:id="@+id/categories"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/card_text_color_header"
+            android:textSize="15sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:id="@+id/description"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/card_backgroundExpand"
+            android:textSize="25sp"/>
+
+</LinearLayout>
+</ScrollView>

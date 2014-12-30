@@ -19,6 +19,7 @@ public class Book {
     private String authors;
     private String date;
     private String url;
+    private String categories;
 
     public String getId(){return this.id;}
     public String getThumb_url(){
@@ -37,6 +38,7 @@ public class Book {
         return this.url;
     }
     public String getAuthors(){return this.authors;}
+    public String getCategories(){return this.categories;}
 
     public void setId(String _id){
         this.id = _id;
@@ -51,6 +53,7 @@ public class Book {
     public void setDescription(String _description){
         this.description = _description;
     }
+    public void setCategories(String _categories){this.categories = _categories; }
 
     public void parse(JsonParser parser) throws JsonParseException,
             IOException {
@@ -76,6 +79,8 @@ public class Book {
                         this.description = parser.getText();
                     }else if (0 == fieldName.compareToIgnoreCase("authors")) {
                         this.authors = parser.getText();
+                    }else if (0 == fieldName.compareToIgnoreCase("categories")) {
+                        this.categories = parser.getText();
                     }
                 }
             }

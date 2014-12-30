@@ -77,6 +77,7 @@ public class LibraryFragment extends Fragment {
     CardGridView gridView;
 
     String user_id = "0";
+    private int mStackLevel = 0;
 
     private SharedPreferences pref;
 
@@ -305,6 +306,23 @@ public class LibraryFragment extends Fragment {
                     @Override
                     public void onClick(Card card, View view) {
                         //show book in dialog
+                        //show book in dialog
+                        mStackLevel++;
+
+                        // DialogFragment.show() will take care of adding the fragment
+                        // in a transaction.  We also want to remove any currently showing
+                        // dialog, so make our own transaction and take care of that here.
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) {
+                            ft.remove(prev);
+                        }
+                        ft.addToBackStack(null);
+
+                        // Create and show the dialog.
+                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url());
+
+                        newFragment.show(ft, "dialog");
                     }
                 });
 
@@ -322,6 +340,71 @@ public class LibraryFragment extends Fragment {
 
         }
     }
+
+    public static class singleBookDialogFragment extends DialogFragment {
+        String description;
+        String authors;
+        String categories;
+        String thumbURL;
+        String title;
+
+        /**
+         * Create a new instance of MyDialogFragment, providing "num"
+         * as an argument.
+         */
+        static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL) {
+            singleBookDialogFragment f = new singleBookDialogFragment();
+
+            // Supply num input as an argument.
+            Bundle args = new Bundle();
+            args.putString("title", _title);
+            args.putString("description", _description);
+            args.putString("authors", _authors);
+            args.putString("categories", _categories);
+            args.putString("thumbURL", _thumbURL);
+
+            f.setArguments(args);
+
+            return f;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            title = getArguments().getString("title");
+            description = getArguments().getString("description");
+            authors = getArguments().getString("authors");
+            categories = getArguments().getString("categories");
+            thumbURL = getArguments().getString("thumbURL");
+
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.single_book, container, false);
+
+            getDialog().setTitle(title);
+
+            TextView descTV = (TextView)v.findViewById(R.id.description);
+            TextView authTV = (TextView)v.findViewById(R.id.authors);
+            TextView catTV = (TextView)v.findViewById(R.id.categories);
+            ImageView thumbIV = (ImageView)v.findViewById(R.id.thumbnail);
+
+            descTV.setText(description);
+            authTV.setText("By: " + authors);
+            catTV.setText("Categorized under: " + categories);
+
+            Picasso.with(getActivity())
+                    .load(thumbURL)
+                    .placeholder(R.drawable.default_thumb)
+                    .error(R.drawable.cancel)
+                    .into(thumbIV);
+
+            return v;
+        }
+    }
+
     public class CustomThumbCard extends CardThumbnail {
         private String imageSource;
         private Context ctx;

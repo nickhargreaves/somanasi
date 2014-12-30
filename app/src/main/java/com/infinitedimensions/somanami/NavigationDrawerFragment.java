@@ -1,8 +1,10 @@
 package com.infinitedimensions.somanami;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -11,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -96,16 +101,60 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+        /*
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1,
                 getResources().getStringArray(R.array.nav_items)
                 ));
+        */
+        AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), getResources().getStringArray(R.array.nav_items), getResources().obtainTypedArray(R.array.nav_icons));
+
+        mDrawerListView.setAdapter(adClass);
+
+
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
+    public class AdapterClass  extends ArrayAdapter<String> {
+        Context context;
+        private String[] TextValue;
+        private TypedArray ImageValue;
 
+        public AdapterClass(Context context, String[] TextValue, TypedArray Image) {
+            super(context, R.layout.nav_drawer_row, TextValue);
+            this.context = context;
+            this.TextValue= TextValue;
+            this.ImageValue = Image;
+
+        }
+
+        @Override
+        public View getView(int position, View coverView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.nav_drawer_row,
+                    parent, false);
+
+            TextView text1 = (TextView)rowView.findViewById(R.id.textView1);
+            text1.setText(TextValue[position]);
+
+            int imageResource = ImageValue.getResourceId(position, -1);//getResources().getIdentifier(ImageValue[position], null, context.getPackageName());
+
+
+            ImageView imv1 = (ImageView)rowView.findViewById(R.id.imageView1);
+            Log.d("imv", "imv: " + imv1);
+            //Drawable image = getResources().getDrawable(imageResource);
+            imv1.setImageResource(imageResource);
+
+            return rowView;
+
+        }
+
+    }
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }

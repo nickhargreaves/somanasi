@@ -10,6 +10,13 @@
         <item>Logout</item>
     </string-array>
 
+    <array name="nav_icons">
+        <item>@drawable/library</item>
+        <item>@drawable/mybooks</item>
+        <item>@drawable/tray</item>
+        <item>@drawable/logout</item>
+    </array>
+
     <string name="action_filter">Filter</string>
     <string name="action_add">Add</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
