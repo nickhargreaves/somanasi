@@ -48,6 +48,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+
         if (position == 3) {
             callFacebookLogout(getApplicationContext());
 

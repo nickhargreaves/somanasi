@@ -3,7 +3,7 @@ package com.infinitedimensions.somanami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -111,7 +112,7 @@ public class LibraryFragment extends Fragment {
     }
 
     public void checkConditions(){
-        notification.setText("Looking for matching books...");
+        notification.setText("Gathering books...");
 
         gridView.setVisibility(View.GONE);
         rlloading.setVisibility(View.VISIBLE);
@@ -148,14 +149,14 @@ public class LibraryFragment extends Fragment {
             }else{
 
                 //gpsT.showSettingsAlert();
-/*
+
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 // Create and show the dialog.
                 allowLocationDialog newFragment = new allowLocationDialog ();
 
 
                 newFragment.show(ft, "dialog");
-*/
+
                 //TODO:timer to check settings
                 notification.setText("Tap to retry!");
 

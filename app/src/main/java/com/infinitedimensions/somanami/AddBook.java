@@ -231,6 +231,9 @@ public class AddBook extends ActionBarActivity {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             try {
                 String url = Defaults.API_URL + "public/addbook/"+ URLEncoder.encode(id) + "/" + URLEncoder.encode(user_id);// +"/" + location;
+
+                Log.d("url", "url: " + url);
+
                 HttpResponse response = httpClient
                         .execute(new HttpGet(url));
 

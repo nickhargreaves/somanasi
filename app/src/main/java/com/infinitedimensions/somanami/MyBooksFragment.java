@@ -3,7 +3,7 @@ package com.infinitedimensions.somanami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -78,14 +79,14 @@ public class MyBooksFragment extends Fragment {
 
     String user_id = "0";
 
-    private SharedPreferences pref;
+    private int mStackLevel = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        user_id = pref.getString("user_id", "0");
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        user_id = prefs.getString("user_id", "0");
 
         rootView = inflater.inflate(R.layout.fragment_library, container, false);
         gridView = (CardGridView) rootView.findViewById(R.id.favoritesGrid);
@@ -152,14 +153,14 @@ public class MyBooksFragment extends Fragment {
             }else{
 
                 //gpsT.showSettingsAlert();
-/*
+
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 // Create and show the dialog.
                 allowLocationDialog newFragment = new allowLocationDialog ();
 
 
                 newFragment.show(ft, "dialog");
-*/
+
                 //TODO:timer to check settings
                 notification.setText("Tap to retry!");
 
@@ -197,8 +198,8 @@ public class MyBooksFragment extends Fragment {
         }
     }
 
-    public static LibraryFragment newInstance(int sectionNumber) {
-        LibraryFragment fragment = new LibraryFragment();
+    public static MyBooksFragment newInstance(int sectionNumber) {
+        MyBooksFragment fragment = new MyBooksFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -308,6 +309,21 @@ public class MyBooksFragment extends Fragment {
                     @Override
                     public void onClick(Card card, View view) {
                         //show book in dialog
+                        mStackLevel++;
+
+                        // DialogFragment.show() will take care of adding the fragment
+                        // in a transaction.  We also want to remove any currently showing
+                        // dialog, so make our own transaction and take care of that here.
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) {
+                            ft.remove(prev);
+                        }
+                        ft.addToBackStack(null);
+
+                        // Create and show the dialog.
+                        DialogFragment newFragment = MyDialogFragment.newInstance(mStackLevel);
+                        newFragment.show(ft, "dialog");
                     }
                 });
 
@@ -325,6 +341,61 @@ public class MyBooksFragment extends Fragment {
 
         }
     }
+    public static class MyDialogFragment extends DialogFragment {
+        int mNum;
+
+        /**
+         * Create a new instance of MyDialogFragment, providing "num"
+         * as an argument.
+         */
+        static MyDialogFragment newInstance(int num) {
+            MyDialogFragment f = new MyDialogFragment();
+
+            // Supply num input as an argument.
+            Bundle args = new Bundle();
+            args.putInt("num", num);
+            f.setArguments(args);
+
+            return f;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mNum = getArguments().getInt("num");
+
+            // Pick a style based on the num.
+            int style = DialogFragment.STYLE_NORMAL, theme = 0;
+            switch ((mNum-1)%6) {
+                case 1: style = DialogFragment.STYLE_NO_TITLE; break;
+                case 2: style = DialogFragment.STYLE_NO_FRAME; break;
+                case 3: style = DialogFragment.STYLE_NO_INPUT; break;
+                case 4: style = DialogFragment.STYLE_NORMAL; break;
+                case 5: style = DialogFragment.STYLE_NORMAL; break;
+                case 6: style = DialogFragment.STYLE_NO_TITLE; break;
+                case 7: style = DialogFragment.STYLE_NO_FRAME; break;
+                case 8: style = DialogFragment.STYLE_NORMAL; break;
+            }
+            switch ((mNum-1)%6) {
+                case 4: theme = android.R.style.Theme_Holo; break;
+                case 5: theme = android.R.style.Theme_Holo_Light_Dialog; break;
+                case 6: theme = android.R.style.Theme_Holo_Light; break;
+                case 7: theme = android.R.style.Theme_Holo_Light_Panel; break;
+                case 8: theme = android.R.style.Theme_Holo_Light; break;
+            }
+            setStyle(style, theme);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.add_book, container, false);
+
+
+            return v;
+        }
+    }
+
     public class CustomThumbCard extends CardThumbnail {
         private String imageSource;
         private Context ctx;
