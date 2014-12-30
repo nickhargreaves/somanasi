@@ -2,6 +2,7 @@ package com.infinitedimensions.somanami;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -19,24 +20,20 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
 public class FBLoginFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private String url;
 
     private UiLifecycleHelper uiHelper;
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -125,49 +122,12 @@ public class FBLoginFragment extends Fragment {
                         editor.putString("lastname", user.getLastName());
                         editor.commit();
 
-                        String url = Defaults.API_URL + "public/register";
+                        url = Defaults.API_URL + "public/register/" + user.getId() + "/" + user.getFirstName() + "/" + user.getLastName();
 
                         //if not registered, register here
                         String reg = pref.getString("reg", "0");
                         if(reg.equals("0")){
-                            // Creating HTTP client
-                            HttpClient httpClient = new DefaultHttpClient();
-                            // Creating HTTP Post
-                            HttpPost httpPost = new HttpPost(url);
-
-                            // Building post parameters
-                            // key and value pair
-                            List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-                            nameValuePair.add(new BasicNameValuePair("id", user.getId()));
-                            nameValuePair.add(new BasicNameValuePair("firstname", user.getFirstName()));
-                            nameValuePair.add(new BasicNameValuePair("lastname", user.getLastName()));
-
-                            // Url Encoding the POST parameters
-                            try {
-                                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-                            } catch (UnsupportedEncodingException e) {
-                                // writing error to Log
-                                e.printStackTrace();
-                            }
-
-                            // Making HTTP Request
-                            try {
-                                HttpResponse result = httpClient.execute(httpPost);
-
-                                // writing response to log
-                                Log.d("Http Response:", result.toString());
-
-                                editor.putString("reg", "1");
-                                editor.commit();
-
-                            } catch (ClientProtocolException e) {
-                                // writing exception to log
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                // writing exception to log
-                                e.printStackTrace();
-
-                            }
+                            new perfomRegistration().execute();
                         }
                     }
                 }
@@ -179,6 +139,57 @@ public class FBLoginFragment extends Fragment {
             getActivity().finish();
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
+        }
+    }
+
+    class perfomRegistration extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+        protected String doInBackground(String... args) {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            try {
+                HttpResponse response = httpClient
+                        .execute(new HttpGet(url));
+
+                InputStream is = response.getEntity().getContent();
+                JsonFactory factory = new JsonFactory();
+
+                JsonParser jsonParser = factory.createJsonParser(is);
+
+                JsonToken token = jsonParser.nextToken();
+
+                token = jsonParser.nextToken();
+                //if (token == JsonToken.FIELD_NAME) {
+
+
+                while (token != JsonToken.END_OBJECT) {
+                    // Each object has a name which we will use to
+                    // identify the type.
+                    token = jsonParser.nextToken();
+                    if (token == JsonToken.FIELD_NAME) {
+                        String objectName = jsonParser.getCurrentName();
+                        // jsonParser.nextToken();
+                        if (0 == objectName.compareToIgnoreCase("status")) {
+                            //fuck it I'll come back to this
+                        }else{
+
+                        }
+                    }
+                }
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+        protected void onPostExecute(String file_url) {
+
+
         }
     }
 }
