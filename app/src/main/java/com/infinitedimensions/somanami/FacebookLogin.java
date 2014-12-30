@@ -1,6 +1,7 @@
 package com.infinitedimensions.somanami;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
@@ -12,6 +13,12 @@ public class FacebookLogin extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
         if (savedInstanceState == null) {
             // Add the fragment on initial activity setup
