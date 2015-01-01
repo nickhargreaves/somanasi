@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +26,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphMultiResult;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphObjectList;
+import com.facebook.model.GraphUser;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -101,6 +115,8 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+        //get friends
+        requestMyAppFacebookFriends(Session.getActiveSession());
         /*
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
@@ -319,5 +335,39 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+    }
+
+    private Request createRequest(Session session) {
+        Request request = Request.newGraphPathRequest(session, "me/friends", null);
+
+        Set<String> fields = new HashSet<String>();
+        String[] requiredFields = new String[] { "id", "name", "picture",
+                "installed" };
+        fields.addAll(Arrays.asList(requiredFields));
+
+        Bundle parameters = request.getParameters();
+        parameters.putString("fields", TextUtils.join(",", fields));
+        request.setParameters(parameters);
+
+        return request;
+    }
+    private void requestMyAppFacebookFriends(Session session) {
+        Request friendsRequest = createRequest(session);
+        friendsRequest.setCallback(new Request.Callback() {
+
+            @Override
+            public void onCompleted(Response response) {
+                List<GraphUser> friends = getResults(response);
+                // TODO: your code here
+
+            }
+        });
+        friendsRequest.executeAsync();
+    }
+    private List<GraphUser> getResults(Response response) {
+        GraphMultiResult multiResult = response
+                .getGraphObjectAs(GraphMultiResult.class);
+        GraphObjectList<GraphObject> data = multiResult.getData();
+        return data.castToListOf(GraphUser.class);
     }
 }
