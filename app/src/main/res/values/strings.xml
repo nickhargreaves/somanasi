@@ -7,6 +7,7 @@
         <item>Library</item>
         <item>My Books</item>
         <item>Tray</item>
+        <item>Invite Friends</item>
         <item>Logout</item>
     </string-array>
 
@@ -14,8 +15,10 @@
         <item>@drawable/library</item>
         <item>@drawable/mybooks</item>
         <item>@drawable/tray</item>
+        <item>@drawable/invite</item>
         <item>@drawable/logout</item>
     </array>
+    <string name="send_request">Send Request</string>
 
     <string name="action_filter">Filter</string>
     <string name="action_add">Add</string>

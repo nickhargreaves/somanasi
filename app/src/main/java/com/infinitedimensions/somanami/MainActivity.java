@@ -12,9 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AppEventsLogger;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
+import com.facebook.widget.WebDialog;
 
 
 public class MainActivity extends ActionBarActivity
@@ -49,7 +53,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
 
-        if (position == 3) {
+        if (position == 4) {
             callFacebookLogout(getApplicationContext());
 
         }else if(position ==0){
@@ -65,10 +69,51 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
                     .commit();
-
+        }else if(position == 3){
+            sendRequestDialog();
         }
     }
+    private void sendRequestDialog() {
+        Bundle params = new Bundle();
+        params.putString("message", "Join Somanasi to share your books with your friends and borrow theirs");
 
+        WebDialog requestsDialog = (
+                new WebDialog.RequestsDialogBuilder(this,
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error != null) {
+                            if (error instanceof FacebookOperationCanceledException) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Network Error",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            final String requestId = values.getString("request");
+                            if (requestId != null) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request sent",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                })
+                .build();
+        requestsDialog.show();
+    }
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
