@@ -176,12 +176,50 @@ public class NavigationDrawerFragment extends Fragment {
         names_items = getResources().getStringArray(R.array.names_items);
 
         faces_icons = getResources().obtainTypedArray(R.array.faces_icons);
-        AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), names_items, faces_icons);
+        AdapterClass2 adClass = new AdapterClass2(getActionBar().getThemedContext(), names_items, faces_icons);
 
         fl.setAdapter(adClass);
 
 
         mDrawerListView.addFooterView(footer, null, true);
+
+    }
+    public class AdapterClass2  extends ArrayAdapter<String> {
+        Context context;
+        private String[] TextValue;
+        private TypedArray ImageValue;
+
+        public AdapterClass2(Context context, String[] TextValue, TypedArray Image) {
+            super(context, R.layout.drawer_list_footer_row, TextValue);
+            this.context = context;
+            this.TextValue= TextValue;
+            this.ImageValue = Image;
+
+        }
+
+        @Override
+        public View getView(int position, View coverView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.drawer_list_footer_row,
+                    parent, false);
+
+            TextView text1 = (TextView)rowView.findViewById(R.id.textView1);
+            text1.setText(TextValue[position]);
+
+            int imageResource = ImageValue.getResourceId(position, -1);//getResources().getIdentifier(ImageValue[position], null, context.getPackageName());
+
+
+            RoundedImageView imv1 = (RoundedImageView)rowView.findViewById(R.id.imageView1);
+            Log.d("imv", "imv: " + imv1);
+            //Drawable image = getResources().getDrawable(imageResource);
+            imv1.setImageResource(imageResource);
+
+            return rowView;
+
+        }
 
     }
     public class AdapterClass  extends ArrayAdapter<String> {
