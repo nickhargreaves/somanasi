@@ -1,4 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 
 android {
     compileSdkVersion 21
@@ -31,4 +46,7 @@ dependencies {
     //
     compile 'com.facebook.android:facebook-android-sdk:3.21.1'
     compile 'org.codehaus.jackson:jackson-core-lgpl:1.9.13'
+    compile('com.twitter.sdk.android:twitter:1.1.1@aar') {
+        transitive = true;
+    }
 }
