@@ -11,6 +11,18 @@
         <item>Logout</item>
     </string-array>
 
+    <string-array name="faces_icons">
+        <item>@drawable/face1</item>
+        <item>@drawable/face2</item>
+        <item>@drawable/face3</item>
+    </string-array>
+
+    <string-array name="names_items">
+        <item>John Smith</item>
+        <item>Spencer King</item>
+        <item>Ken Harrison</item>
+    </string-array>
+
     <string-array name="nav_icons">
         <item>@drawable/library</item>
         <item>@drawable/mybooks</item>
@@ -18,6 +30,7 @@
         <item>@drawable/invite</item>
         <item>@drawable/logout</item>
     </string-array>
+
     <string name="send_request">Send Request</string>
 
     <string name="action_filter">Filter</string>

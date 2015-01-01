@@ -15,13 +15,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -77,6 +77,14 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    private String[] nav_items;
+
+    private TypedArray nav_icons;
+
+    private String[] names_items;
+
+    private TypedArray faces_icons;
+
     public NavigationDrawerFragment() {
     }
 
@@ -126,9 +134,9 @@ public class NavigationDrawerFragment extends Fragment {
                 getResources().getStringArray(R.array.nav_items)
                 ));
         */
-        String[] nav_items = getResources().getStringArray(R.array.nav_items);
+        nav_items = getResources().getStringArray(R.array.nav_items);
 
-        TypedArray nav_icons = getResources().obtainTypedArray(R.array.nav_icons);
+        nav_icons = getResources().obtainTypedArray(R.array.nav_icons);
 
         AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), nav_items, nav_icons);
 
@@ -137,11 +145,11 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
-        setUpHeaderAndFooter();
+        setUpFriendsList();
 
         return mDrawerListView;
     }
-    private void setUpHeaderAndFooter() {
+    private void setUpFriendsList() {
 
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -153,21 +161,25 @@ public class NavigationDrawerFragment extends Fragment {
                 R.layout.drawer_list_footer_divider, null, false);
         mDrawerListView.addFooterView(footer_divider, null, false);
 
-        // This view is Settings view
+        // Set up view
         View footer = (View) inflater.inflate(R.layout.drawer_list_footer_view,
                 mDrawerListView, false);
 
-        footer.setOnClickListener(new View.OnClickListener() {
+        int minHeight = 3*100;
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, minHeight);
+        footer.setLayoutParams(params);
 
-            @Override
-            public void onClick(View v) {
+        ListView fl = (ListView)footer.findViewById(R.id.friendslist);
 
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
-                }
 
-            }
-        });
+        //set adapter
+        names_items = getResources().getStringArray(R.array.names_items);
+
+        faces_icons = getResources().obtainTypedArray(R.array.faces_icons);
+        AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), names_items, faces_icons);
+
+        fl.setAdapter(adClass);
+
 
         mDrawerListView.addFooterView(footer, null, true);
 
