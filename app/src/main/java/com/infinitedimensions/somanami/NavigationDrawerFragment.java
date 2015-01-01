@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -125,13 +126,51 @@ public class NavigationDrawerFragment extends Fragment {
                 getResources().getStringArray(R.array.nav_items)
                 ));
         */
-        AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), getResources().getStringArray(R.array.nav_items), getResources().obtainTypedArray(R.array.nav_icons));
+        String[] nav_items = getResources().getStringArray(R.array.nav_items);
+
+        TypedArray nav_icons = getResources().obtainTypedArray(R.array.nav_icons);
+
+        AdapterClass adClass = new AdapterClass(getActionBar().getThemedContext(), nav_items, nav_icons);
 
         mDrawerListView.setAdapter(adClass);
 
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
+        setUpHeaderAndFooter();
+
         return mDrawerListView;
+    }
+    private void setUpHeaderAndFooter() {
+
+        LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        /*View header = (View) inflater.inflate(R.layout.drawer_list_footer_view,
+                mDrawerListView, false);
+        mDrawerListView.addHeaderView(header, null, false);
+        */
+        View footer_divider = (View) inflater.inflate(
+                R.layout.drawer_list_footer_divider, null, false);
+        mDrawerListView.addFooterView(footer_divider, null, false);
+
+        // This view is Settings view
+        View footer = (View) inflater.inflate(R.layout.drawer_list_footer_view,
+                mDrawerListView, false);
+
+        footer.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                }
+
+            }
+        });
+
+        mDrawerListView.addFooterView(footer, null, true);
+
     }
     public class AdapterClass  extends ArrayAdapter<String> {
         Context context;

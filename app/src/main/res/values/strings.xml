@@ -11,13 +11,13 @@
         <item>Logout</item>
     </string-array>
 
-    <array name="nav_icons">
+    <string-array name="nav_icons">
         <item>@drawable/library</item>
         <item>@drawable/mybooks</item>
         <item>@drawable/tray</item>
         <item>@drawable/invite</item>
         <item>@drawable/logout</item>
-    </array>
+    </string-array>
     <string name="send_request">Send Request</string>
 
     <string name="action_filter">Filter</string>
