@@ -35,10 +35,15 @@ import com.facebook.model.GraphMultiResult;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
+import com.squareup.picasso.Picasso;
 
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -81,9 +86,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     private TypedArray nav_icons;
 
-    private String[] names_items;
-
-    private TypedArray faces_icons;
+    private ArrayList<String> friend_names = new ArrayList<String>();
+    private ArrayList<String> friend_ids = new ArrayList<String>();
 
     public NavigationDrawerFragment() {
     }
@@ -145,7 +149,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
-        setUpFriendsList();
+
 
         return mDrawerListView;
     }
@@ -171,25 +175,21 @@ public class NavigationDrawerFragment extends Fragment {
 
         ListView fl = (ListView)footer.findViewById(R.id.friendslist);
 
-
         //set adapter
-        names_items = getResources().getStringArray(R.array.names_items);
 
-        faces_icons = getResources().obtainTypedArray(R.array.faces_icons);
-        AdapterClass2 adClass = new AdapterClass2(getActionBar().getThemedContext(), names_items, faces_icons);
+        AdapterClass2 adClass = new AdapterClass2(getActionBar().getThemedContext(), friend_names, friend_ids);
 
         fl.setAdapter(adClass);
-
 
         mDrawerListView.addFooterView(footer, null, true);
 
     }
     public class AdapterClass2  extends ArrayAdapter<String> {
         Context context;
-        private String[] TextValue;
-        private TypedArray ImageValue;
+        private List<String> TextValue;
+        private List<String> ImageValue;
 
-        public AdapterClass2(Context context, String[] TextValue, TypedArray Image) {
+        public AdapterClass2(Context context, List<String> TextValue, List<String> Image) {
             super(context, R.layout.drawer_list_footer_row, TextValue);
             this.context = context;
             this.TextValue= TextValue;
@@ -207,21 +207,49 @@ public class NavigationDrawerFragment extends Fragment {
                     parent, false);
 
             TextView text1 = (TextView)rowView.findViewById(R.id.textView1);
-            text1.setText(TextValue[position]);
+            text1.setText(TextValue.get(position));
 
-            int imageResource = ImageValue.getResourceId(position, -1);//getResources().getIdentifier(ImageValue[position], null, context.getPackageName());
+            String id = ImageValue.get(position);
 
+            String image_value = "http://graph.facebook.com/"+id+"/picture";
+
+            Log.d("im", "im: " + image_value);
 
             RoundedImageView imv1 = (RoundedImageView)rowView.findViewById(R.id.imageView1);
-            Log.d("imv", "imv: " + imv1);
-            //Drawable image = getResources().getDrawable(imageResource);
-            imv1.setImageResource(imageResource);
+
+            String final_image_value="";
+
+            try
+            {
+                URL obj = new URL(image_value);
+                URLConnection conn = obj.openConnection();
+                Map<String, List<String>> map = conn.getHeaderFields();
+
+                final_image_value = map.get("Location").toString();
+
+                final_image_value = final_image_value.replace("[", "");
+
+                final_image_value = final_image_value.replace("]", "");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Picasso.with(getActivity())
+                    .load(final_image_value)
+                    .placeholder(R.drawable.default_thumb)
+                    .error(R.drawable.cancel)
+                    .into(imv1);
 
             return rowView;
 
         }
 
     }
+
+
+
     public class AdapterClass  extends ArrayAdapter<String> {
         Context context;
         private String[] TextValue;
@@ -447,7 +475,13 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onCompleted(Response response) {
                 List<GraphUser> friends = getResults(response);
-                // TODO: your code here
+
+                for (int i = 0; i < friends.size(); i++) {
+                    GraphUser user = friends.get(i);
+                    friend_names.add(user.getName());
+                    friend_ids.add(user.getId());
+                }
+                setUpFriendsList();
 
             }
         });
@@ -459,4 +493,5 @@ public class NavigationDrawerFragment extends Fragment {
         GraphObjectList<GraphObject> data = multiResult.getData();
         return data.castToListOf(GraphUser.class);
     }
+
 }
