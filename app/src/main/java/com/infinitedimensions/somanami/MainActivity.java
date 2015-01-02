@@ -51,6 +51,14 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    public void onBackPressed()
+    {
+        if (mNavigationDrawerFragment.isDrawerOpen()) {
+            //
+            mNavigationDrawerFragment.closeNavDrawer();
+        }
+    }
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
 
         if (position == 4) {
