@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -175,6 +176,23 @@ public class NavigationDrawerFragment extends Fragment {
 
         ListView fl = (ListView)footer.findViewById(R.id.friendslist);
 
+        fl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                //get friend id
+                String friend_id = friend_ids.get(position);
+                String friend_name = friend_names.get(position);
+
+                //close nav
+                    closeNavDrawer();
+
+                //open user's book list
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, FriendBooksFragment.newInstance(position + 1, friend_id, friend_name))
+                        .commit();
+            }
+        });
         //set adapter
 
         AdapterClass2 adClass = new AdapterClass2(getActionBar().getThemedContext(), friend_names, friend_ids);
@@ -282,6 +300,8 @@ public class NavigationDrawerFragment extends Fragment {
             Log.d("imv", "imv: " + imv1);
             //Drawable image = getResources().getDrawable(imageResource);
             imv1.setImageResource(imageResource);
+
+
 
             return rowView;
 

@@ -133,6 +133,9 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 mTitle = getResources().getStringArray(R.array.nav_items)[2];
                 break;
+            default:
+                mTitle = "";
+                break;
         }
     }
 
