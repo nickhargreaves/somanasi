@@ -212,7 +212,7 @@ public class MyBooksFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
+                getArguments().getInt(ARG_SECTION_NUMBER), "");
     }
 
 

@@ -76,8 +76,9 @@ public class FriendBooksFragment extends Fragment {
     SharedPreferences.Editor editor;
     CardGridView gridView;
 
-    String user_id = "0";
-    String user_name = "";
+    private static final String USER_NAME = "user_name";
+    private static final String USER_ID = "user_id";
+
 
     private int mStackLevel = 0;
 
@@ -114,7 +115,7 @@ public class FriendBooksFragment extends Fragment {
     }
 
     public void checkConditions(){
-        notification.setText("Fetching "+ user_name +"'s books...");
+        notification.setText("Fetching "+ getArguments().getString(USER_NAME) +"'s books...");
 
         gridView.setVisibility(View.GONE);
         rlloading.setVisibility(View.VISIBLE);
@@ -200,8 +201,8 @@ public class FriendBooksFragment extends Fragment {
         FriendBooksFragment fragment = new FriendBooksFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString("friend_id", _friend_id);
-        args.putString("friend_name", _friend_name);
+        args.putString(USER_ID, _friend_id);
+        args.putString(USER_NAME, _friend_name);
 
         fragment.setArguments(args);
         return fragment;
@@ -213,7 +214,7 @@ public class FriendBooksFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
+                getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getString(USER_NAME));
     }
 
 
@@ -229,7 +230,7 @@ public class FriendBooksFragment extends Fragment {
         protected String doInBackground(String... args) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             try {
-                String url = Defaults.API_URL + "public/friendbooks/" + user_id;
+                String url = Defaults.API_URL + "public/friendbooks/" + getArguments().getString(USER_ID);
                 HttpResponse response = httpClient
                         .execute(new HttpGet(url));
                 Log.d("url", "url:" + url);
@@ -343,13 +344,7 @@ public class FriendBooksFragment extends Fragment {
 
         }
     }
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        user_id = getArguments().getString("friend_id");
-        user_name = getArguments().getString("friend_name");
 
-    }
     public static class singleBookDialogFragment extends DialogFragment {
         String description;
         String authors;

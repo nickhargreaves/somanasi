@@ -189,7 +189,7 @@ public class NavigationDrawerFragment extends Fragment {
                 //open user's book list
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, FriendBooksFragment.newInstance(position + 1, friend_id, friend_name))
+                        .replace(R.id.container, FriendBooksFragment.newInstance(8, friend_id, friend_name))
                         .commit();
             }
         });

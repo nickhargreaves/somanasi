@@ -122,7 +122,7 @@ public class MainActivity extends ActionBarActivity
                 .build();
         requestsDialog.show();
     }
-    public void onSectionAttached(int number) {
+    public void onSectionAttached(int number, String somevalue) {
         switch (number) {
             case 1:
                 mTitle = getResources().getStringArray(R.array.nav_items)[0];
@@ -133,8 +133,10 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 mTitle = getResources().getStringArray(R.array.nav_items)[2];
                 break;
-            default:
-                mTitle = "";
+            case 8:
+                String[] names = somevalue.split(" ");
+
+                mTitle = names[0] + "'s Books";
                 break;
         }
     }
