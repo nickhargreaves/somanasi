@@ -244,6 +244,11 @@ public class MainActivity extends ActionBarActivity
 
         }
 
+        Intent i = new Intent(this, FacebookLogin.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+
        finish();
 
     }

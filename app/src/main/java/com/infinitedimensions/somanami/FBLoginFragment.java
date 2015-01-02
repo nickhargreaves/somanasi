@@ -140,6 +140,8 @@ public class FBLoginFragment extends Fragment {
 
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             getActivity().startActivity(i);
             getActivity().finish();
         } else if (state.isClosed()) {
