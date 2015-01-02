@@ -46,4 +46,5 @@
     <string name="add_book_cancel">Cancel</string>
 
     <string name="add_book_placeholder">Search terms</string>
+    <string name="gcm_project_id">906832278927</string>
 </resources>

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"c05bU6zpvXPOpQakG5gG3IOJh8Y/4flF7UWTeki3yAmrJ2sX0W1ukf4\"",
+ "etag": "\"c05bU6zpvXPOpQakG5gG3IOJh8Y/-0OX7lUEG2ZTiIJMMPkVu07sHMA\"",
  "discoveryVersion": "v1",
  "id": "messaging:v1",
  "name": "messaging",
@@ -13,9 +13,9 @@
   "x32": "http://www.google.com/images/icons/product/search-32.gif"
  },
  "protocol": "rest",
- "baseUrl": "https://myApplicationId.appspot.com/_ah/api/messaging/v1/sendMessage/",
+ "baseUrl": "https://burnished-treat-813.appspot.com/_ah/api/messaging/v1/sendMessage/",
  "basePath": "/_ah/api/messaging/v1/sendMessage/",
- "rootUrl": "https://myApplicationId.appspot.com/_ah/api/",
+ "rootUrl": "https://burnished-treat-813.appspot.com/_ah/api/",
  "servicePath": "messaging/v1/sendMessage/",
  "batchPath": "batch",
  "parameters": {
