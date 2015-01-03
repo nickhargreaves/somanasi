@@ -1,0 +1,25 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".MyActivity"
+    android:background="@color/white"
+    xmlns:card="http://schemas.android.com/apk/res-auto">
+
+    <it.gmariotti.cardslib.library.view.CardGridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="190dp"
+        android:numColumns="1"
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="2dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        card:list_card_layout_resourceID="@layout/native_list_card_thumbnail_layout_wide"
+        android:id="@+id/resultsGrid"/>
+
+
+</LinearLayout>

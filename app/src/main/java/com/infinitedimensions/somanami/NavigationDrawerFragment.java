@@ -2,6 +2,7 @@ package com.infinitedimensions.somanami;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -36,6 +37,7 @@ import com.facebook.model.GraphMultiResult;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
+import com.infinitedimensions.somanami.gcm.NotificationsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -158,10 +160,19 @@ public class NavigationDrawerFragment extends Fragment {
 
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        /*View header = (View) inflater.inflate(R.layout.drawer_list_footer_view,
+        View header = (View) inflater.inflate(R.layout.drawer_header_view,
                 mDrawerListView, false);
+        ImageView notifB = (ImageView)header.findViewById(R.id.notificationsI);
+        notifB.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent i = new Intent(getActionBar().getThemedContext(), NotificationsActivity.class);
+                getActionBar().getThemedContext().startActivity(i);
+            }
+        });
+
         mDrawerListView.addHeaderView(header, null, false);
-        */
+
         View footer_divider = (View) inflater.inflate(
                 R.layout.drawer_list_footer_divider, null, false);
         mDrawerListView.addFooterView(footer_divider, null, false);
