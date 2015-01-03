@@ -36,14 +36,16 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
         <receiver
-            android:name=".GcmBroadcastReceiver"
+            android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.infinitedimensions.somanasi" />
             </intent-filter>
         </receiver>
-        <service android:name=".GcmIntentService" />
+        <service android:name=".gcm.GcmIntentService" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

@@ -3,6 +3,7 @@ package com.infinitedimensions.somanami.gcm;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ public class RegisterApp extends AsyncTask<Void, Void, String> {
     String SENDER_ID = Defaults.GOOGLE_SENDER_ID;
     String regid = null;
     private int appVersion;
+    SharedPreferences prefs;
+    private String user_id;
     public RegisterApp(Context ctx, GoogleCloudMessaging gcm, int appVersion){
         this.ctx = ctx;
         this.gcm = gcm;
@@ -43,6 +46,8 @@ public class RegisterApp extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... arg0) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        user_id = prefs.getString("user_id", "0");
         String msg = "";
         try {
             if (gcm == null) {
@@ -87,7 +92,7 @@ public class RegisterApp extends AsyncTask<Void, Void, String> {
     private void sendRegistrationIdToBackend() {
         URI url = null;
         try {
-            url = new URI(Defaults.API_URL + "GCMDemo/register.php?regId=" + regid);
+            url = new URI(Defaults.API_URL + "gcm/register.php?regId=" + regid + "&fid="+user_id);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

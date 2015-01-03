@@ -150,23 +150,23 @@ public class FBLoginFragment extends Fragment {
                             new perfomRegistration().execute();
                         }
 
-                        if (checkPlayServices()) {
-                            gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
-                            regid = getRegistrationId(getActivity().getApplicationContext());
-                            if(regid.isEmpty()){
-                                gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
-                                regid = getRegistrationId(getActivity().getApplicationContext());
 
-                                if (regid.isEmpty()) {
-                                    new RegisterApp(getActivity().getApplicationContext(), gcm, getAppVersion(getActivity().getApplicationContext())).execute();
-                                }else{
-                                    //Toast.makeText(getActivity().getApplicationContext(), "Device already Registered", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
                     }
                 }
             }).executeAsync();
+
+
+            // if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
+            regid = getRegistrationId(getActivity().getApplicationContext());
+
+
+            if (regid.isEmpty()) {
+                gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
+                regid = getRegistrationId(getActivity().getApplicationContext());
+                new RegisterApp(getActivity().getApplicationContext(), gcm, getAppVersion(getActivity().getApplicationContext())).execute();
+            }
+
 
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
