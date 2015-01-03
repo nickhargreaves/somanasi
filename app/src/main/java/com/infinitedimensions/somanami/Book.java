@@ -21,6 +21,7 @@ public class Book {
     private String url;
     private String categories;
     private String owner;
+    private String owner_name;
 
     public String getOwner(){return this.owner;}
     public String getId(){return this.id;}
@@ -41,6 +42,8 @@ public class Book {
     }
     public String getAuthors(){return this.authors;}
     public String getCategories(){return this.categories;}
+    public String getOwnerName(){return this.owner_name;}
+
 
     public void setId(String _id){
         this.id = _id;
@@ -57,6 +60,7 @@ public class Book {
     }
     public void setCategories(String _categories){this.categories = _categories; }
     public void setOwner(String _owner){this.owner= _owner; }
+    public void setOwnerName(String _ownername){this.owner_name= _ownername; }
 
 
     public void parse(JsonParser parser) throws JsonParseException,
@@ -87,6 +91,8 @@ public class Book {
                         this.categories = parser.getText();
                     }else if (0 == fieldName.compareToIgnoreCase("owner")) {
                         this.owner = parser.getText();
+                    }else if (0 == fieldName.compareToIgnoreCase("owner_name")) {
+                        this.owner_name = parser.getText();
                     }
                 }
             }

@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,8 +38,11 @@ import org.codehaus.jackson.JsonToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
@@ -326,7 +330,7 @@ public class LibraryFragment extends Fragment {
                         ft.addToBackStack(null);
 
                         // Create and show the dialog.
-                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id);
+                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id, content.getOwnerName());
 
                         newFragment.show(ft, "dialog");
                     }
@@ -355,12 +359,13 @@ public class LibraryFragment extends Fragment {
         String title;
         String owner;
         String user_id;
+        String name;
 
         /**
          * Create a new instance of MyDialogFragment, providing "num"
          * as an argument.
          */
-         static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL, String _owner, String _user_id) {
+         static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL, String _owner, String _user_id, String _name) {
             singleBookDialogFragment f = new singleBookDialogFragment();
 
             // Supply num input as an argument.
@@ -372,6 +377,7 @@ public class LibraryFragment extends Fragment {
             args.putString("thumbURL", _thumbURL);
             args.putString("owner", _owner);
              args.putString("user_id", _user_id);
+             args.putString("name", _name);
             f.setArguments(args);
 
             return f;
@@ -388,6 +394,7 @@ public class LibraryFragment extends Fragment {
             thumbURL = getArguments().getString("thumbURL");
             owner = getArguments().getString("owner");
             user_id = getArguments().getString("user_id");
+            name = getArguments().getString("owner_name");
 
         }
 
@@ -403,10 +410,9 @@ public class LibraryFragment extends Fragment {
             TextView catTV = (TextView)v.findViewById(R.id.categories);
             ImageView thumbIV = (ImageView)v.findViewById(R.id.thumbnail);
             ToggleButton statusTB = (ToggleButton)v.findViewById(R.id.toggleStatus);
+            LinearLayout ownerInfo = (LinearLayout)v.findViewById(R.id.ownerInfoLayout);
 
             //set toggle status
-
-            Log.d("owner, user", owner + " ow " + user_id);
 
             if(owner.equals(user_id))
                 {
@@ -420,6 +426,11 @@ public class LibraryFragment extends Fragment {
                     statusTB.setEnabled(false);
                     
                     //show owner info
+                    String[] ownerNames = name.split(" ");
+                    String ownerName = ownerNames[1];
+
+                setOwnerInformation(v, owner, getActivity(), ownerName);
+                    ownerInfo.setVisibility(View.VISIBLE);
                     //ask to borrow
             }
 
@@ -436,6 +447,39 @@ public class LibraryFragment extends Fragment {
             return v;
         }
     }
+    public static void setOwnerInformation(View v, String id, Context ctx, String name){
+        String image_value = "http://graph.facebook.com/"+id+"/picture";
+
+        RoundedImageView imv1 = (RoundedImageView)v.findViewById(R.id.ownerImage);
+        TextView ownerName = (TextView)v.findViewById(R.id.ownerName);
+        ownerName.setText(name);
+
+        String final_image_value="";
+
+        try
+        {
+            URL obj = new URL(image_value);
+            URLConnection conn = obj.openConnection();
+            Map<String, List<String>> map = conn.getHeaderFields();
+
+            final_image_value = map.get("Location").toString();
+
+            final_image_value = final_image_value.replace("[", "");
+
+            final_image_value = final_image_value.replace("]", "");
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Picasso.with(ctx)
+                .load(final_image_value)
+                .placeholder(R.drawable.default_thumb)
+                .error(R.drawable.cancel)
+                .into(imv1);
+    }
+
 
     public class CustomThumbCard extends CardThumbnail {
         private String imageSource;

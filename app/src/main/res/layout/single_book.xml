@@ -20,12 +20,46 @@
                 android:scaleType="fitCenter"
                 android:id="@+id/thumbnail" />
 
-        <ToggleButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textOff="Engaged"
-            android:textOn="Available"
-            android:id="@+id/toggleStatus" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textOff="Engaged"
+                android:textOn="Available"
+                android:id="@+id/toggleStatus" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/ownerInfoLayout"
+                android:visibility="gone">
+
+                <com.infinitedimensions.somanami.RoundedImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/ownerImage"
+                    android:layout_gravity="center_horizontal"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/ownerName"
+                    android:layout_gravity="center_horizontal"/>
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/request_book"
+                    android:id="@+id/requestB" />
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
