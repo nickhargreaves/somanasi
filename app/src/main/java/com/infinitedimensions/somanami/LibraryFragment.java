@@ -3,15 +3,15 @@ package com.infinitedimensions.somanami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.infinitedimensions.somanami.gcm.RequestBook;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
@@ -330,7 +332,7 @@ public class LibraryFragment extends Fragment {
                         ft.addToBackStack(null);
 
                         // Create and show the dialog.
-                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id, content.getOwnerName());
+                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id, content.getOwnerName(), content.getId());
 
                         newFragment.show(ft, "dialog");
                     }
@@ -359,13 +361,14 @@ public class LibraryFragment extends Fragment {
         String title;
         String owner;
         String user_id;
-        String name;
+        String owner_name;
+        String book_id;
 
         /**
          * Create a new instance of MyDialogFragment, providing "num"
          * as an argument.
          */
-         static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL, String _owner, String _user_id, String _name) {
+         static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL, String _owner, String _user_id, String _name, String _book_id) {
             singleBookDialogFragment f = new singleBookDialogFragment();
 
             // Supply num input as an argument.
@@ -377,7 +380,8 @@ public class LibraryFragment extends Fragment {
             args.putString("thumbURL", _thumbURL);
             args.putString("owner", _owner);
              args.putString("user_id", _user_id);
-             args.putString("name", _name);
+             args.putString("owner_name", _name);
+             args.putString("book_id", _book_id);
             f.setArguments(args);
 
             return f;
@@ -394,7 +398,8 @@ public class LibraryFragment extends Fragment {
             thumbURL = getArguments().getString("thumbURL");
             owner = getArguments().getString("owner");
             user_id = getArguments().getString("user_id");
-            name = getArguments().getString("owner_name");
+            owner_name = getArguments().getString("owner_name");
+            book_id = getArguments().getString("book_id");
 
         }
 
@@ -411,6 +416,7 @@ public class LibraryFragment extends Fragment {
             ImageView thumbIV = (ImageView)v.findViewById(R.id.thumbnail);
             ToggleButton statusTB = (ToggleButton)v.findViewById(R.id.toggleStatus);
             LinearLayout ownerInfo = (LinearLayout)v.findViewById(R.id.ownerInfoLayout);
+            Button requestB = (Button)v.findViewById(R.id.requestB);
 
             //set toggle status
 
@@ -426,12 +432,20 @@ public class LibraryFragment extends Fragment {
                     statusTB.setEnabled(false);
                     
                     //show owner info
-                    String[] ownerNames = name.split(" ");
-                    String ownerName = ownerNames[1];
+                    String[] ownerNames = owner_name.split(" ");
+                    String ownerName = ownerNames[0];
 
-                setOwnerInformation(v, owner, getActivity(), ownerName);
+                    setOwnerInformation(v, owner, getActivity(), ownerName);
                     ownerInfo.setVisibility(View.VISIBLE);
                     //ask to borrow
+                    requestB.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v){
+
+                            new RequestBook(getActivity().getApplicationContext(),owner, user_id, book_id).execute();
+
+                        }
+                    });
             }
 
             descTV.setText(description);
@@ -447,6 +461,7 @@ public class LibraryFragment extends Fragment {
             return v;
         }
     }
+
     public static void setOwnerInformation(View v, String id, Context ctx, String name){
         String image_value = "http://graph.facebook.com/"+id+"/picture";
 

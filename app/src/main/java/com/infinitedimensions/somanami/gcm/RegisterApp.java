@@ -92,7 +92,7 @@ public class RegisterApp extends AsyncTask<Void, Void, String> {
     private void sendRegistrationIdToBackend() {
         URI url = null;
         try {
-            url = new URI(Defaults.API_URL + "gcm/register.php?regId=" + regid + "&fid="+user_id);
+            url = new URI(Defaults.API_URL + "public/register_device/" + regid + "/"+user_id);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
