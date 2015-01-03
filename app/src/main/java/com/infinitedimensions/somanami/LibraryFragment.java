@@ -3,6 +3,7 @@ package com.infinitedimensions.somanami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -76,15 +78,19 @@ public class LibraryFragment extends Fragment {
     SharedPreferences.Editor editor;
     CardGridView gridView;
 
-    String user_id = "0";
     private int mStackLevel = 0;
 
     private SharedPreferences pref;
+    private String user_id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        user_id = pref.getString("user_id", "0");
+
         rootView = inflater.inflate(R.layout.fragment_library, container, false);
         gridView = (CardGridView) rootView.findViewById(R.id.favoritesGrid);
         notification = (TextView)rootView.findViewById(R.id.notification);
@@ -320,7 +326,7 @@ public class LibraryFragment extends Fragment {
                         ft.addToBackStack(null);
 
                         // Create and show the dialog.
-                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url());
+                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id);
 
                         newFragment.show(ft, "dialog");
                     }
@@ -347,12 +353,14 @@ public class LibraryFragment extends Fragment {
         String categories;
         String thumbURL;
         String title;
+        String owner;
+        String user_id;
 
         /**
          * Create a new instance of MyDialogFragment, providing "num"
          * as an argument.
          */
-        static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL) {
+         static singleBookDialogFragment newInstance(String _title, String _description, String _authors, String _categories, String _thumbURL, String _owner, String _user_id) {
             singleBookDialogFragment f = new singleBookDialogFragment();
 
             // Supply num input as an argument.
@@ -362,7 +370,8 @@ public class LibraryFragment extends Fragment {
             args.putString("authors", _authors);
             args.putString("categories", _categories);
             args.putString("thumbURL", _thumbURL);
-
+            args.putString("owner", _owner);
+             args.putString("user_id", _user_id);
             f.setArguments(args);
 
             return f;
@@ -371,11 +380,14 @@ public class LibraryFragment extends Fragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             title = getArguments().getString("title");
             description = getArguments().getString("description");
             authors = getArguments().getString("authors");
             categories = getArguments().getString("categories");
             thumbURL = getArguments().getString("thumbURL");
+            owner = getArguments().getString("owner");
+            user_id = getArguments().getString("user_id");
 
         }
 
@@ -390,6 +402,25 @@ public class LibraryFragment extends Fragment {
             TextView authTV = (TextView)v.findViewById(R.id.authors);
             TextView catTV = (TextView)v.findViewById(R.id.categories);
             ImageView thumbIV = (ImageView)v.findViewById(R.id.thumbnail);
+            ToggleButton statusTB = (ToggleButton)v.findViewById(R.id.toggleStatus);
+
+            //set toggle status
+
+            Log.d("owner, user", owner + " ow " + user_id);
+
+            if(owner.equals(user_id))
+                {
+                    statusTB.setEnabled(true);
+                    //set status
+                    //lend
+                    //see who has it, if lent out
+
+
+                }else{
+                    statusTB.setEnabled(false);
+                    //show owner info
+                    //ask to borrow
+            }
 
             descTV.setText(description);
             authTV.setText("By: " + authors);
