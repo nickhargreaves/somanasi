@@ -2,22 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.infinitedimensions.somanami"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
     <application
         android:allowBackup="true"
+        android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:icon="@drawable/app_icon"
-        tools:replace="android:icon">
+        tools:replace="android:icon" >
         <activity
             android:name=".FacebookLogin"
             android:label="@string/app_name" >
@@ -27,12 +26,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".AddBook"></activity>
-        <activity android:name="com.facebook.LoginActivity"
+        <activity android:name=".MainActivity" />
+        <activity android:name=".AddBook" />
+        <activity
+            android:name="com.facebook.LoginActivity"
             android:label="@string/app_name" />
+
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
         <meta-data android:name="com.crashlytics.ApiKey" android:value="3c386910915d5ae46a21d0c6cb2567321f54e1ec"/>
+
+        <receiver
+            android:name=".gcm.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.infinitedimensions.somanami" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".gcm.GcmIntentService" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
     </application>
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- Creates a custom permission so only this app can receive its messages. -->
+    <permission
+        android:name="com.infinitedimensions.somanami.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.infinitedimensions.somanami.permission.C2D_MESSAGE" />
+
+
+    <!-- Permission to vibrate -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 </manifest>

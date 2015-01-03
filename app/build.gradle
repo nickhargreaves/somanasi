@@ -36,17 +36,20 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //Core
+    //Optional for built-in cards
+    //
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
-    //Core
     compile 'com.github.gabrielemariotti.cards:cardslib-core:2.0.1'
-    //Optional for built-in cards
     compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.0.1'
     compile 'com.squareup.picasso:picasso:2.4.0'
-    //
     compile 'com.facebook.android:facebook-android-sdk:3.21.1'
     compile 'org.codehaus.jackson:jackson-core-lgpl:1.9.13'
     compile('com.twitter.sdk.android:twitter:1.1.1@aar') {
         transitive = true;
     }
+    compile 'com.google.android.gms:play-services:6.5.87'
+    compile project(path: ':somanamigcm', configuration: 'android-endpoints')
+
 }

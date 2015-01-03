@@ -1,7 +1,10 @@
 package com.infinitedimensions.somanami;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +21,10 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.infinitedimensions.somanami.gcm.RegisterApp;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,13 +35,21 @@ import org.codehaus.jackson.JsonToken;
 
 import java.io.InputStream;
 import java.util.Arrays;
-
+import java.util.concurrent.atomic.AtomicInteger;
 public class FBLoginFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private String url;
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    GoogleCloudMessaging gcm;
+    AtomicInteger msgId = new AtomicInteger();
+    String regid;
 
     private UiLifecycleHelper uiHelper;
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -56,7 +71,7 @@ public class FBLoginFragment extends Fragment {
 
         LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
         authButton.setFragment(this);
-        authButton.setReadPermissions(Arrays.asList("email"));
+        authButton.setReadPermissions(Arrays.asList("email", "user_friends"));
         //authButton.setReadPermissions(Arrays.asList("user_likes", "user_status"));
 
         return view;
@@ -109,7 +124,7 @@ public class FBLoginFragment extends Fragment {
         uiHelper.onSaveInstanceState(outState);
     }
 
-    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+    private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
 
@@ -125,6 +140,8 @@ public class FBLoginFragment extends Fragment {
                         editor.putString("email", user.asMap().get("email").toString());
                         editor.commit();
 
+
+
                         url = Defaults.API_URL + "public/register/" + user.getId() + "/" + user.getFirstName() + "/" + user.getLastName() + "/" + user.asMap().get("email");
 
                         //if not registered, register here
@@ -132,12 +149,29 @@ public class FBLoginFragment extends Fragment {
                         if(reg.equals("0")){
                             new perfomRegistration().execute();
                         }
+
+
                     }
                 }
             }).executeAsync();
 
+
+            // if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
+            regid = getRegistrationId(getActivity().getApplicationContext());
+
+
+            if (regid.isEmpty()) {
+                gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
+                regid = getRegistrationId(getActivity().getApplicationContext());
+                new RegisterApp(getActivity().getApplicationContext(), gcm, getAppVersion(getActivity().getApplicationContext())).execute();
+            }
+
+
             Intent i = new Intent(getActivity(), MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             getActivity().startActivity(i);
             getActivity().finish();
         } else if (state.isClosed()) {
@@ -194,6 +228,79 @@ public class FBLoginFragment extends Fragment {
         protected void onPostExecute(String file_url) {
 
 
+        }
+    }
+
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+
+    public boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                getActivity().finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the current registration ID for application on GCM service.
+     * <p>
+     * If result is empty, the app needs to register.
+     *
+     * @return registration ID, or empty string if there is no existing
+     *         registration ID.
+     */
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        if (registrationId.isEmpty()) {
+            Log.i(TAG, "Registration not found.");
+            return "";
+        }
+        // Check if app was updated; if so, it must clear the registration ID
+        // since the existing regID is not guaranteed to work with the new
+        // app version.
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(getActivity().getApplicationContext());
+        if (registeredVersion != currentVersion) {
+            Log.i(TAG, "App version changed.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    /**
+     * @return Application's {@code SharedPreferences}.
+     */
+    private SharedPreferences getGCMPreferences(Context context) {
+        // This sample app persists the registration ID in shared preferences, but
+        // how you store the regID in your app is up to you.
+        return getActivity().getSharedPreferences(MainActivity.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+
+    /**
+     * @return Application's version code from the {@code PackageManager}.
+     */
+    private int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
         }
     }
 }

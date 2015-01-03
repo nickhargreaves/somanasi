@@ -51,6 +51,14 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    public void onBackPressed()
+    {
+        if (mNavigationDrawerFragment.isDrawerOpen()) {
+            //
+            mNavigationDrawerFragment.closeNavDrawer();
+        }
+    }
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
 
         if (position == 4) {
@@ -114,7 +122,7 @@ public class MainActivity extends ActionBarActivity
                 .build();
         requestsDialog.show();
     }
-    public void onSectionAttached(int number) {
+    public void onSectionAttached(int number, String somevalue) {
         switch (number) {
             case 1:
                 mTitle = getResources().getStringArray(R.array.nav_items)[0];
@@ -124,6 +132,11 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 3:
                 mTitle = getResources().getStringArray(R.array.nav_items)[2];
+                break;
+            case 8:
+                String[] names = somevalue.split(" ");
+
+                mTitle = names[0] + "'s Books";
                 break;
         }
     }
@@ -172,10 +185,6 @@ public class MainActivity extends ActionBarActivity
         dialog.setContentView(R.layout.dialog_add);
 
         final TextView tvQuery = (TextView)dialog.findViewById(R.id.eTSearch);
-
-        if (BuildConfig.DEBUG) {
-            tvQuery.setText("Chaos");
-        }
 
         //set onclicklisteners
         dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
@@ -230,6 +239,11 @@ public class MainActivity extends ActionBarActivity
             //clear your preferences if saved
 
         }
+
+        Intent i = new Intent(this, FacebookLogin.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
 
        finish();
 

@@ -2,13 +2,15 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/nav_green">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:id="@+id/imageView1"
-        android:layout_margin="15dp"/>
+        android:layout_margin="12dp"
+        android:tint="@color/golden"/>
 
     <TextView
         android:layout_width="fill_parent"
@@ -16,5 +18,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Small Text"
         android:id="@+id/textView1"
-        android:layout_margin="25dp"/>
+        android:layout_margin="10dp"
+        android:layout_gravity="center_vertical"/>
+
 </LinearLayout>

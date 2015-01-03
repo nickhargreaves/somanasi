@@ -284,6 +284,14 @@ public class AddBook extends ActionBarActivity {
         protected void onPostExecute(String file) {
             Toast.makeText(getApplicationContext(), "Added successfully!", Toast.LENGTH_LONG).show();
             pDialog.dismiss();
+
+
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(i);
+
             finish();
         }
 
