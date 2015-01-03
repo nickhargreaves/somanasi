@@ -418,6 +418,7 @@ public class LibraryFragment extends Fragment {
 
                 }else{
                     statusTB.setEnabled(false);
+                    
                     //show owner info
                     //ask to borrow
             }
