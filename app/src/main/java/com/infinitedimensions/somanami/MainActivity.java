@@ -186,10 +186,6 @@ public class MainActivity extends ActionBarActivity
 
         final TextView tvQuery = (TextView)dialog.findViewById(R.id.eTSearch);
 
-        if (BuildConfig.DEBUG) {
-            tvQuery.setText("Chaos");
-        }
-
         //set onclicklisteners
         dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
             @Override
