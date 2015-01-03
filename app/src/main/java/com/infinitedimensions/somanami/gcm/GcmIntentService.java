@@ -61,6 +61,25 @@ public class GcmIntentService extends IntentService {
                 Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.
                 sendNotification(extras.getString("Notice"));
+
+                //add notification to db
+                if(intent.hasExtra("notification")){
+                    String message = extras.getString("Notice");
+                    String user = extras.getString("user");
+                    String type = extras.getString("type");
+                    String book = extras.getString("book");
+
+                    NotificationGCM notificationGCM = new NotificationGCM();
+                    notificationGCM.setType(type);
+                    notificationGCM.setMessage(message);
+                    notificationGCM.setUser(user);
+                    notificationGCM.setBook(book);
+
+                    SimpleDBHandler db = new SimpleDBHandler(getApplicationContext(), null, null, 1);
+                    db.addNotification(notificationGCM);
+                }
+
+
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
