@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
 
 public class GcmIntentService extends IntentService {
@@ -94,8 +93,10 @@ public class GcmIntentService extends IntentService {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+        Intent i = new Intent(this, NotificationsActivity.class);
+        i.putExtra("openNotifications", "1");
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

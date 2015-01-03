@@ -35,7 +35,7 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
                 + COLUMN_BOOK + " TEXT,"
                 + COLUMN_MESSAGE + " TEXT,"
                 + COLUMN_USER + " TEXT,"
-                + COLUMN_TYPE + " TEXT,"
+                + COLUMN_TYPE + " TEXT"
                 + "); ";
         db.execSQL(CREATE_CONTENTS_TABLE);
     }
