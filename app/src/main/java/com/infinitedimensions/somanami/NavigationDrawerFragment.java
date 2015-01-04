@@ -296,13 +296,13 @@ public class NavigationDrawerFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            Picasso.with(getActivity())
-                    .load(final_image_value)
-                    .placeholder(R.drawable.default_thumb)
-                    .error(R.drawable.cancel)
-                    .into(imv1);
-
+            if (final_image_value.trim().length() != 0) {
+                Picasso.with(getActivity())
+                        .load(final_image_value)
+                        .placeholder(R.drawable.default_thumb)
+                        .error(R.drawable.cancel)
+                        .into(imv1);
+            }
             return rowView;
 
         }

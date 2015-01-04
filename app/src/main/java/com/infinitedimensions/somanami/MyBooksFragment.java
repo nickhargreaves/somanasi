@@ -395,13 +395,13 @@ public class MyBooksFragment extends Fragment {
             descTV.setText(description);
             authTV.setText("By: " + authors);
             catTV.setText("Categorized under: " + categories);
-
-            Picasso.with(getActivity())
-                    .load(thumbURL)
-                    .placeholder(R.drawable.default_thumb)
-                    .error(R.drawable.cancel)
-                    .into(thumbIV);
-
+            if (thumbURL.trim().length() != 0) {
+                Picasso.with(getActivity())
+                        .load(thumbURL)
+                        .placeholder(R.drawable.default_thumb)
+                        .error(R.drawable.cancel)
+                        .into(thumbIV);
+            }
             return v;
         }
     }
@@ -422,12 +422,13 @@ public class MyBooksFragment extends Fragment {
                 //viewImage.getLayoutParams().width=250;
                 //viewImage.getLayoutParams().height=250;
                 //Picasso.with(ctx).setDebugging(true);
-                Picasso.with(ctx)
-                        .load(imageSource)
-                        .placeholder(R.drawable.default_thumb)
-                        .error(R.drawable.cancel)
-                        .into((ImageView) viewImage);
-
+                if (imageSource.trim().length() != 0) {
+                    Picasso.with(ctx)
+                            .load(imageSource)
+                            .placeholder(R.drawable.default_thumb)
+                            .error(R.drawable.cancel)
+                            .into((ImageView) viewImage);
+                }
                 DisplayMetrics metrics=parent.getResources().getDisplayMetrics();
                 viewImage.getLayoutParams().width = ActionBar.LayoutParams.MATCH_PARENT;//(int)(250*metrics.density);
                 viewImage.getLayoutParams().height = (int)(150*metrics.density);

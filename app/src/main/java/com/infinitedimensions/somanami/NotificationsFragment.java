@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
@@ -19,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.infinitedimensions.somanami.gcm.NotificationGCM;
+import com.infinitedimensions.somanami.gcm.RespondRequest;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
@@ -50,11 +53,15 @@ public class NotificationsFragment extends Fragment {
 
     private RelativeLayout rlloading;
     private TextView notification;
-
+    private SharedPreferences pref;
+    private String user_id;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        user_id = pref.getString("user_id", "0");
 
         rootView = inflater.inflate(R.layout.activity_notifcations, container, false);
         gridView = (CardGridView) rootView.findViewById(R.id.resultsGrid);
@@ -182,6 +189,8 @@ public class NotificationsFragment extends Fragment {
                     builder1.setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
+                                    new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook()).execute();
+
                                     dialog.cancel();
                                 }
                             });
