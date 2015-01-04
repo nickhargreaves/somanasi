@@ -44,7 +44,6 @@ public class RespondRequest extends AsyncTask<Void, Void, String> {
         URI url = null;
         try {
             String urlstring =Defaults.API_URL + "public/respond_request/" + borrower + "/" + user_id + "/" + book_id + "/" + date;
-
             url = new URI(urlstring);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block

@@ -27,9 +27,14 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -37,6 +42,7 @@ import com.facebook.model.GraphMultiResult;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.WebDialog;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -118,7 +124,47 @@ public class NavigationDrawerFragment extends Fragment {
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
+    private void sendRequestDialog() {
+        Bundle params = new Bundle();
+        params.putString("message", "Join Somanasi to share your books with your friends and borrow theirs");
 
+        WebDialog requestsDialog = (
+                new WebDialog.RequestsDialogBuilder(getActivity(),
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error != null) {
+                            if (error instanceof FacebookOperationCanceledException) {
+                                Toast.makeText(getActionBar().getThemedContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActionBar().getThemedContext(),
+                                        "Network Error",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            final String requestId = values.getString("request");
+                            if (requestId != null) {
+                                Toast.makeText(getActionBar().getThemedContext(),
+                                        "Request sent",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActionBar().getThemedContext(),
+                                        "Request cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                })
+                .build();
+        requestsDialog.show();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -190,7 +236,7 @@ public class NavigationDrawerFragment extends Fragment {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View header = (View) inflater.inflate(R.layout.drawer_header_view,
                 mDrawerListView, false);
-        ImageView notifB = (ImageView)header.findViewById(R.id.notificationsI);
+        LinearLayout notifB = (LinearLayout)header.findViewById(R.id.notificationsL);
         notifB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -202,16 +248,34 @@ public class NavigationDrawerFragment extends Fragment {
                         .commit();
             }
         });
+        LinearLayout logout = (LinearLayout)header.findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                closeNavDrawer();
 
+                callFacebookLogout(getActionBar().getThemedContext());
+            }
+        });
         mDrawerListView.addHeaderView(header, null, false);
 
         View footer_divider = (View) inflater.inflate(
                 R.layout.drawer_list_footer_divider, null, false);
+        RelativeLayout inviteRL = (RelativeLayout)footer_divider.findViewById(R.id.inviteL);
+        inviteRL.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                sendRequestDialog();
+            }
+        });
+
         mDrawerListView.addFooterView(footer_divider, null, false);
 
         // Set up view
         View footer = (View) inflater.inflate(R.layout.drawer_list_footer_view,
                 mDrawerListView, false);
+
+
 
         int minHeight = 3*100;
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, minHeight);
@@ -243,6 +307,35 @@ public class NavigationDrawerFragment extends Fragment {
         fl.setAdapter(adClass);
 
         mDrawerListView.addFooterView(footer, null, true);
+
+    }
+    /**
+     * Logout From Facebook
+     */
+    public void callFacebookLogout(Context context) {
+        Session session = Session.getActiveSession();
+        if (session != null) {
+
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        } else {
+
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+
+        }
+
+        Intent i = new Intent(getActivity(), FacebookLogin.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+
+        getActivity().finish();
 
     }
     public class AdapterClass2  extends ArrayAdapter<String> {

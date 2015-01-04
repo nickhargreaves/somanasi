@@ -210,7 +210,7 @@ public class NotificationsFragment extends Fragment {
                         @Override
                         public void onClick(View view){
 
-                            String date = URLEncoder.encode(dpResult.getYear() + "/" + dpResult.getMonth() + "/" + dpResult.getDayOfMonth()) ;
+                            String date = URLEncoder.encode(dpResult.getYear() + "-" + dpResult.getMonth() + "-" + dpResult.getDayOfMonth()) ;
 
                             new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
                             dialog.cancel();

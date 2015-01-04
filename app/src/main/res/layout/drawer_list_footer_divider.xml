@@ -6,15 +6,43 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="My Friends"
-        android:id="@+id/textView"
-        android:fontFamily="sans-serif-thin"
-        android:textColor="#ffa95500"
-        android:textSize="25sp"
-        android:layout_margin="12dp"
-        />
+        android:id="@+id/inviteL"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Friends"
+            android:id="@+id/textView"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="#ffa95500"
+            android:textSize="25sp"
+            android:layout_alignParentLeft="true"
+            />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/textView"
+            android:layout_toEndOf="@+id/textView">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/inviteI"
+                android:src="@drawable/invite"
+                android:tint="@color/material_blue_grey_800"
+                android:layout_alignParentRight="true"
+                />
+            </RelativeLayout>
+
+
+    </RelativeLayout>
 
 </LinearLayout>

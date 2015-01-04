@@ -6,10 +6,39 @@
     android:padding="10dp"
     android:background="@color/white">
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/notificationsI"
-        android:src="@drawable/notifications"/>
+    <LinearLayout
+        android:id="@+id/notificationsL"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/notificationsI"
+            android:src="@drawable/notifications"
+            android:tint="@color/material_blue_grey_800"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:id="@+id/logout">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/inviteI"
+            android:src="@drawable/logout"
+            android:tint="@color/material_blue_grey_800"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>
