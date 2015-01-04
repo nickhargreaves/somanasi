@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +210,7 @@ public class NotificationsFragment extends Fragment {
                         @Override
                         public void onClick(View view){
 
-                            String date = dpResult.getYear() + "/" + dpResult.getMonth() + "/" + dpResult.getDayOfMonth() ;
+                            String date = URLEncoder.encode(dpResult.getYear() + "/" + dpResult.getMonth() + "/" + dpResult.getDayOfMonth()) ;
 
                             new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
                             dialog.cancel();
