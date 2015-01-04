@@ -37,7 +37,6 @@ import com.facebook.model.GraphMultiResult;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
-import com.infinitedimensions.somanami.gcm.NotificationsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -132,6 +131,8 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
         //get friends
+        if(Session.getActiveSession()==null)
+            logout();
         requestMyAppFacebookFriends(Session.getActiveSession());
         /*
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
@@ -156,6 +157,33 @@ public class NavigationDrawerFragment extends Fragment {
 
         return mDrawerListView;
     }
+    public void logout(){
+        Context context = getActivity().getApplicationContext();
+
+        Session session = Session.getActiveSession();
+        if (session != null) {
+
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        } else {
+
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+
+        }
+
+        Intent i = new Intent(context, FacebookLogin.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+
+        getActivity().finish();
+    }
     private void setUpFriendsList() {
 
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
@@ -166,8 +194,12 @@ public class NavigationDrawerFragment extends Fragment {
         notifB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent i = new Intent(getActionBar().getThemedContext(), NotificationsActivity.class);
-                getActionBar().getThemedContext().startActivity(i);
+                closeNavDrawer();
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, NotificationsFragment.newInstance(9))
+                        .commit();
             }
         });
 

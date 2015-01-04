@@ -67,11 +67,24 @@ public class MainActivity extends ActionBarActivity
             callFacebookLogout(getApplicationContext());
 
         }else if(position ==0){
-            //show library
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, LibraryFragment.newInstance(position + 1))
-                    .commit();
+            if(getIntent().hasExtra("notifications")){
+                //show notifications
+                getIntent().removeExtra("notifications");
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, NotificationsFragment.newInstance(9))
+                        .commit();
+            }else{
+
+                //show library
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, LibraryFragment.newInstance(position + 1))
+                        .commit();
+           }
+
+
+
 
         }else if(position ==1){
             // update the main content by replacing fragments
@@ -140,6 +153,10 @@ public class MainActivity extends ActionBarActivity
 
                 mTitle = names[0] + "'s Books";
                 break;
+            case 9:
+                mTitle = "My notifications";
+                break;
+
         }
     }
 
