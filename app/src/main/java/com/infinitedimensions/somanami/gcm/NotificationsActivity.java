@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -13,12 +14,16 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.infinitedimensions.somanami.GifAnimationDrawable;
 import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
+import com.infinitedimensions.somanami.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -39,7 +44,12 @@ public class NotificationsActivity extends ActionBarActivity {
     SimpleDBHandler dbHandler;
     private ArrayList<Card> cards;
     CardGridArrayAdapter mCardArrayAdapter;
+    List<NotificationGCM> notificationGCMList;
+    private ImageView loading_gif;
+    private GifAnimationDrawable little;
 
+    private RelativeLayout rlloading;
+    private TextView notification;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,12 +65,52 @@ public class NotificationsActivity extends ActionBarActivity {
         gridView = (CardGridView) findViewById(R.id.resultsGrid);
         dbHandler = new SimpleDBHandler(getApplicationContext(), null, null, 1);
         cards = new ArrayList<Card>();
-        displayNotifications();
 
+        notification = (TextView)findViewById(R.id.notification);
+
+        loading_gif = (ImageView)findViewById(R.id.ivLoading);
+
+        rlloading = (RelativeLayout)findViewById(R.id.rlLoading);
+
+        // and add the GifAnimationDrawable
+        try{
+
+            little = new GifAnimationDrawable(getResources().openRawResource(R.raw.loading_anim));
+            little.setOneShot(false);
+            loading_gif.setImageDrawable(little);
+        }catch(IOException ioe){
+
+        }
+        notification.setText("");
+        new GetNotifications().execute();
+
+
+    }
+    class GetNotifications extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            gridView.setVisibility(View.GONE);
+            rlloading.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            notificationGCMList = dbHandler.getNotifications();
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String file_url){
+            displayNotifications();
+            rlloading.setVisibility(View.GONE);
+            gridView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void displayNotifications() {
-        List<NotificationGCM> notificationGCMList = dbHandler.getNotifications();
+
 
         Log.d("totalstuff", "total: " + notificationGCMList.size());
 
@@ -161,7 +211,7 @@ public class NotificationsActivity extends ActionBarActivity {
                             .load(imageSource)
                             .placeholder(R.drawable.default_thumb)
                             .error(R.drawable.cancel)
-                            .into((ImageView) viewImage);
+                            .into((RoundedImageView) viewImage);
                 }
 
 
