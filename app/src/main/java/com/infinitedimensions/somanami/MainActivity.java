@@ -59,10 +59,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
 
-        if (position == 4) {
-            callFacebookLogout(getApplicationContext());
-
-        }else if(position ==0){
+        if(position ==0){
             if(getIntent().hasExtra("notifications")){
                 //show notifications
                 getIntent().removeExtra("notifications");
@@ -79,16 +76,21 @@ public class MainActivity extends ActionBarActivity
                         .commit();
            }
 
-
-
-
         }else if(position ==1){
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
                     .commit();
+        }else if(position ==2){
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, TrayFragment.newInstance(position + 1))
+                    .commit();
         }
+
+
     }
     public void setActionBarTitle(String title){
         ActionBar actionBar = getSupportActionBar();

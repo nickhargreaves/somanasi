@@ -642,11 +642,13 @@ public class NavigationDrawerFragment extends Fragment {
                     friend_names.add(user.getName());
                     friend_ids.add(user.getId());
                 }
-                setUpFriendsList();
 
+                setUpFriendsList();
             }
         });
         friendsRequest.executeAsync();
+
+
     }
     private List<GraphUser> getResults(Response response) {
         GraphMultiResult multiResult = response
