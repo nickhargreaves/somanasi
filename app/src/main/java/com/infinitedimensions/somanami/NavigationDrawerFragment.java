@@ -278,7 +278,6 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
 
-
     public class AdapterClass  extends ArrayAdapter<String> {
         Context context;
         private String[] TextValue;

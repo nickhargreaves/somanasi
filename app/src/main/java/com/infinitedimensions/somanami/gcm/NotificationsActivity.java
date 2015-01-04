@@ -4,15 +4,18 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
 import com.squareup.picasso.Picasso;
 
@@ -69,15 +72,7 @@ public class NotificationsActivity extends ActionBarActivity {
             Card card = new Card(getApplicationContext());
 
             //Create a CardHeader
-            CustomHeaderInnerCard header = new CustomHeaderInnerCard(getApplicationContext(), content.getMesage(), content.getUser());
-
-            //
-            String str = content.getBook();
-
-            if (str.length() > 50)
-                str = str.substring(0, 50) + "...";
-
-            header.setTitle(str);
+            CustomHeaderInnerCard header = new CustomHeaderInnerCard(getApplicationContext(), content.getMesage(), content.getType());
 
             //Add Header to card
             card.addCardHeader(header);
@@ -171,21 +166,31 @@ public class NotificationsActivity extends ActionBarActivity {
 
 
                 DisplayMetrics metrics=parent.getResources().getDisplayMetrics();
-                viewImage.getLayoutParams().width = (int)(100*metrics.density);
-                viewImage.getLayoutParams().height = (int)(100*metrics.density);
+                viewImage.getLayoutParams().width = (int)(50*metrics.density);
+                viewImage.getLayoutParams().height = (int)(50*metrics.density);
             }
         }
+    }
+    @Override
+    public void onBackPressed()
+    {
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+        finish();
     }
 
     public class CustomHeaderInnerCard extends CardHeader {
 
-        private String title;
-        private String authors;
+        private String desc;
+        private String type;
 
-        public CustomHeaderInnerCard(Context context, String _title, String _authors) {
+        public CustomHeaderInnerCard(Context context, String _desc, String _type) {
             super(context, R.layout.card_inner_header);
-            this.title = _title;
-            this.authors = _authors;
+            this.desc = _desc;
+            this.type = _type;
         }
 
         @Override
@@ -193,12 +198,15 @@ public class NotificationsActivity extends ActionBarActivity {
 
             if (view!=null){
                 TextView t1 = (TextView) view.findViewById(R.id.title);
+
                 if (t1!=null)
-                    t1.setText(title);
+                    t1.setText(desc);
+                    t1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+
 
                 TextView t2 = (TextView) view.findViewById(R.id.subtitle);
                 if (t2!=null)
-                    t2.setText("By: " + authors);
+                    t2.setVisibility(View.GONE);
             }
         }
     }

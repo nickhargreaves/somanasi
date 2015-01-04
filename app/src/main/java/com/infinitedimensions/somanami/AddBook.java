@@ -296,6 +296,16 @@ public class AddBook extends ActionBarActivity {
         }
 
     }
+    @Override
+    public void onBackPressed()
+    {
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(i);
+        finish();
+    }
     class getContent extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {

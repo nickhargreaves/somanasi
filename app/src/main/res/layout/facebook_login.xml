@@ -45,13 +45,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp"
+        android:visibility="gone"/>
     <com.twitter.sdk.android.core.identity.TwitterLoginButton
         android:id="@+id/twitter_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        />
 
     <com.facebook.widget.LoginButton
         android:id="@+id/authButton"
@@ -59,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:visibility="gone"
+
         />
 
 </LinearLayout>
