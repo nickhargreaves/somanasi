@@ -2,7 +2,6 @@ package com.infinitedimensions.somanami.gcm;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.infinitedimensions.somanami.Defaults;
@@ -23,12 +22,14 @@ public class RespondRequest extends AsyncTask<Void, Void, String> {
     private String borrower;
     private String user_id;
     private String book_id;
+    private String date;
 
-    public RespondRequest(Context ctx, String borrower, String user_id, String book_id){
-        this.ctx = ctx;
-        this.borrower = borrower;
-        this.user_id = user_id;
-        this.book_id = book_id;
+    public RespondRequest(Context _ctx, String _borrower, String _user_id, String _book_id, String _date){
+        this.ctx = _ctx;
+        this.borrower = _borrower;
+        this.user_id = _user_id;
+        this.book_id = _book_id;
+        this.date = _date;
     }
 
 
@@ -42,8 +43,7 @@ public class RespondRequest extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... arg0) {
         URI url = null;
         try {
-            String urlstring =Defaults.API_URL + "public/respond_request/" + borrower + "/" + user_id + "/" + book_id;
-            Log.d("url", "urlstring" + urlstring);
+            String urlstring =Defaults.API_URL + "public/respond_request/" + borrower + "/" + user_id + "/" + book_id + "/" + date;
 
             url = new URI(urlstring);
         } catch (URISyntaxException e) {

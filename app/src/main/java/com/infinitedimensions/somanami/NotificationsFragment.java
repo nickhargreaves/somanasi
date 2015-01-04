@@ -1,9 +1,8 @@
 package com.infinitedimensions.somanami;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -182,27 +182,43 @@ public class NotificationsFragment extends Fragment {
             card.setOnClickListener(new Card.OnCardClickListener() {
                 @Override
                 public void onClick(Card card, View view) {
-                    //Add to DB
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-                    builder1.setMessage("Give user book?");
-                    builder1.setCancelable(true);
-                    builder1.setPositiveButton("Yes",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook()).execute();
+                    //Respond to book request
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setTitle(getResources().getString(R.string.lend_book));
 
-                                    dialog.cancel();
-                                }
-                            });
-                    builder1.setNegativeButton("Ignore",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                    dialog.setContentView(R.layout.dialog_give_book);
 
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
+                    //datepicker stuff
+                    final DatePicker dpResult;;
+                    int year;
+                    int month;
+                    int day;
+                    final int DATE_DIALOG_ID = 999;
+
+                    dpResult = (DatePicker)dialog.findViewById(R.id.datePicker);
+
+                    //set onclicklisteners
+                    dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    dialog.findViewById(R.id.button_lend).setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View view){
+
+                            String date = dpResult.getYear() + "/" + dpResult.getMonth() + "/" + dpResult.getDayOfMonth() ;
+
+                            new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
+                            dialog.cancel();
+                        }
+                    });
+
+                    dialog.show();
+
+
                 }
             });
 

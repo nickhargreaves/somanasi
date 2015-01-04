@@ -66,7 +66,9 @@
     <string name="options_unregister">Unregister</string>
     <string name="options_clear">Clear</string>
     <string name="options_exit">Exit</string>
-
     <string name="request_book">Request Book</string>
 
+    <string name="lend_book">Lend Book</string>
+    <string name="due_date">Date Due</string>
+    <string name="select_due_date">Select due date</string>
 </resources>
