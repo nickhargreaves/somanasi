@@ -213,8 +213,8 @@ public class FriendBooksFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getString(USER_NAME));
+        ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER), getArguments().getString(USER_NAME));
+        ((MainActivity) activity).setActionBarTitle(getArguments().getString(USER_NAME));
     }
 
 

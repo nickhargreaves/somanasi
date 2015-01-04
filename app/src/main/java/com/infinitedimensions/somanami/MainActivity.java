@@ -96,6 +96,12 @@ public class MainActivity extends ActionBarActivity
             sendRequestDialog();
         }
     }
+    public void setActionBarTitle(String title){
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(title);
+    }
     private void sendRequestDialog() {
         Bundle params = new Bundle();
         params.putString("message", "Join Somanasi to share your books with your friends and borrow theirs");

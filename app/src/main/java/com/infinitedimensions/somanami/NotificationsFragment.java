@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -139,6 +140,9 @@ public class NotificationsFragment extends Fragment {
             //Add Header to card
             card.addCardHeader(header);
 
+            String[] names = content.getMesage().split(" ");
+            String name = names[0];
+
             //Add thumbnail
             String imageSource = "http://graph.facebook.com/"+content.getUser()+"/picture";
 
@@ -159,7 +163,7 @@ public class NotificationsFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), imageSource);
+            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), imageSource, content.getUser(), name);
 
             thumbnail.setExternalUsage(true);
             //thumbnail.setUrlResource(content.getThumb_url());
@@ -207,11 +211,15 @@ public class NotificationsFragment extends Fragment {
     public class CustomThumbCard extends CardThumbnail {
         private String imageSource;
         private Context ctx;
+        private String user_id;
+        private String name;
 
-        public CustomThumbCard(Context context, String _imageSource) {
+        public CustomThumbCard(Context context, String _imageSource, String _user_id, String _name) {
             super(context);
             this.ctx = context;
             this.imageSource = _imageSource;
+            this.user_id = _user_id;
+            this.name = _name;
         }
 
         @Override
@@ -225,6 +233,20 @@ public class NotificationsFragment extends Fragment {
                             .error(R.drawable.cancel)
                             .into((RoundedImageView) viewImage);
                 }
+
+                viewImage.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+
+                        //open user's book list
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.container, FriendBooksFragment.newInstance(8, user_id, name + "'s library"))
+                                .commit();
+
+                    }
+
+                });
 
 
                 DisplayMetrics metrics=parent.getResources().getDisplayMetrics();
