@@ -37,6 +37,7 @@ import org.codehaus.jackson.JsonToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,7 +182,7 @@ public class TrayFragment extends Fragment {
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
             try {
-                String url = Defaults.API_URL + "public/mybooks/" + user_id;
+                String url = Defaults.API_URL + "public/my_tray/" + user_id;
                 HttpResponse response = httpClient
                         .execute(new HttpGet(url));
                 Log.d("url", "url:" + url);
@@ -285,25 +286,22 @@ public class TrayFragment extends Fragment {
         gridView.setVisibility(View.VISIBLE);
         rlloading.setVisibility(View.GONE);
 
-        int[] titles1 =
-                {(R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name)
-                };
-        int[] messages1 =
-                {(R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name)
-                };
 
+        //separate lent from borrowed
+        List<TrayItem> lent = new ArrayList<TrayItem>();
+        List<TrayItem> borrowed = new ArrayList<TrayItem>();
 
+        for(int i = 0; i<contentList.size(); i++){
+            TrayItem trayItem = contentList.get(i);
+            Log.d("tryitem", "trayitem:" + trayItem.getBorrowed() + ":" + trayItem.getBook_title());
+            if(trayItem.getBorrowed().equals("1")){
+                borrowed.add(trayItem);
+            }else{
+                lent.add(trayItem);
+            }
+        }
 
-
-        MyAdapter adapter = new MyAdapter(getActivity().getSupportFragmentManager(), titles1,messages1);
+        MyAdapter adapter = new MyAdapter(getActivity().getSupportFragmentManager(), borrowed);
         ViewPager pager = ((ViewPager)rootview.findViewById(R.id.pager1));
 
         pager.setId((int)(Math.random()*10000));
@@ -326,22 +324,7 @@ public class TrayFragment extends Fragment {
         //indicator.setStrokeWidth(2 * density);
 
 
-        int[] titles2 =
-                {(R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name)
-                };
-        int[] messages2 =
-                {(R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name),
-                        (R.string.app_name)
-                };
-
-        MyAdapter adapter2 = new MyAdapter(getActivity().getSupportFragmentManager(), titles2,messages2);
+        MyAdapter adapter2 = new MyAdapter(getActivity().getSupportFragmentManager(), lent);
         ViewPager pager2 = ((ViewPager)rootView.findViewById(R.id.pager2));
 
         pager2.setId((int)(Math.random()*10000));
@@ -364,25 +347,22 @@ public class TrayFragment extends Fragment {
 
     public class MyAdapter extends FragmentPagerAdapter {
 
-        int[] mMessages;
-        int[] mTitles;
+        List<TrayItem> trayItems;
 
-        public MyAdapter(FragmentManager fm, int[] titles, int[] messages) {
+        public MyAdapter(FragmentManager fm, List<TrayItem> _trayItems) {
             super(fm);
-            mTitles = titles;
-            mMessages = messages;
+            trayItems = _trayItems;
         }
 
         @Override
         public int getCount() {
-            return mMessages.length;
+            return trayItems.size();
         }
 
         @Override
         public Fragment getItem(int position) {
             Bundle bundle = new Bundle();
-            bundle.putString("title",getString(mTitles[position]));
-            bundle.putString("msg", getString(mMessages[position]));
+            bundle.putSerializable("trayItem", new TrayItemsDataHelper(trayItems.get(position)));
 
             Fragment f = new MyFragment();
             f.setArguments(bundle);
@@ -393,8 +373,7 @@ public class TrayFragment extends Fragment {
 
     public static final class MyFragment extends Fragment {
 
-        String mMessage;
-        String mTitle;
+        TrayItem trayItem;
 
         /**
          * When creating, retrieve this instance's number from its arguments.
@@ -403,27 +382,39 @@ public class TrayFragment extends Fragment {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            mTitle = getArguments().getString("title");
-            mMessage = getArguments().getString("msg");
+            TrayItemsDataHelper trd = (TrayItemsDataHelper)(getArguments().getSerializable("trayItem"));
+            trayItem = trd.getTrayItem();
+
         }
 
-        /**
-         * The Fragment's UI is just a simple text view showing its
-         * instance number.
-         */
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
             ViewGroup root = (ViewGroup) inflater.inflate(R.layout.card_pager_textview, null);
 
-            ((TextView)root.findViewById(R.id.title)).setText(mTitle);
+            ((TextView)root.findViewById(R.id.title)).setText(trayItem.getBook_title());
 
-            ((TextView)root.findViewById(R.id.description)).setText(mMessage);
+            ((TextView)root.findViewById(R.id.description)).setText(trayItem.getDate_due());
 
             return root;
         }
 
+
+
+    }
+
+    public static class TrayItemsDataHelper implements Serializable {
+
+        private TrayItem trayItem;
+
+        public TrayItemsDataHelper(TrayItem _trayItem) {
+            this.trayItem = _trayItem;
+        }
+
+        public TrayItem getTrayItem() {
+            return this.trayItem;
+        }
     }
 
 }
