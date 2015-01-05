@@ -74,4 +74,7 @@
 
     <string name="lent_note">You currently have no lent books</string>
     <string name="borrow_note">You currently have no borrowed books!</string>
+
+    <string name="give_book">Give Book</string>
+    <string name="send_message">Send Message</string>
 </resources>
