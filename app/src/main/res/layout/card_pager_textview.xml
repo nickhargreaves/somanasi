@@ -1,26 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:gravity="center|center"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="3dp"
     >
-    <TextView
-        android:id="@+id/title"
-        style="@style/CardTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center|top"
-        android:text="title" />
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#555555"
-        android:text="hello this is a whole bunch of text hello this is a whole bunch of text hello this is a whole bunch of text hello this is a whole bunch of text"
-        android:layout_margin="3dp"
-        />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:id="@+id/bookThumb" />
+
+    <RelativeLayout
+
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:padding="3dp">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/CardTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="title" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#555555"
+            android:text="hello this is a whole bunch of text"
+            android:layout_below="@+id/title"
+            android:layout_marginTop="10dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/description"
+            android:layout_alignRight="@+id/description"
+            android:layout_alignEnd="@+id/description"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center">
+
+                <com.infinitedimensions.somanami.RoundedImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/userThumb" />
+
+            </LinearLayout>
+
+    </RelativeLayout>
+
 </LinearLayout>

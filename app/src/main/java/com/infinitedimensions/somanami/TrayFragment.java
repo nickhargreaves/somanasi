@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.apache.http.HttpResponse;
@@ -38,8 +39,11 @@ import org.codehaus.jackson.JsonToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
@@ -395,7 +399,48 @@ public class TrayFragment extends Fragment {
 
             ((TextView)root.findViewById(R.id.title)).setText(trayItem.getBook_title());
 
-            ((TextView)root.findViewById(R.id.description)).setText(trayItem.getDate_due());
+            ((TextView)root.findViewById(R.id.description)).setText("Due: " + trayItem.getDate_due());
+
+            //set book thumb
+            ImageView bookThumb = (ImageView)root.findViewById(R.id.bookThumb);
+
+            String thumbURL = trayItem.getBook_thumb();
+
+            if (thumbURL.trim().length() != 0) {
+                Picasso.with(getActivity())
+                        .load(thumbURL)
+                        .placeholder(R.drawable.default_thumb)
+                        .error(R.drawable.cancel)
+                        .into(bookThumb);
+            }
+            //set user thumb
+            RoundedImageView userThumb = (RoundedImageView)root.findViewById(R.id.userThumb);
+            String userThumbUrl = "http://graph.facebook.com/"+trayItem.getPerson_id()+"/picture";
+            String final_image_value="";
+
+            try
+            {
+                URL obj = new URL(userThumbUrl);
+                URLConnection conn = obj.openConnection();
+                Map<String, List<String>> map = conn.getHeaderFields();
+
+                final_image_value = map.get("Location").toString();
+
+                final_image_value = final_image_value.replace("[", "");
+
+                final_image_value = final_image_value.replace("]", "");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (final_image_value.trim().length() != 0) {
+                Picasso.with(getActivity())
+                        .load(final_image_value)
+                        .placeholder(R.drawable.default_thumb)
+                        .error(R.drawable.cancel)
+                        .into(userThumb);
+            }
 
             return root;
         }
