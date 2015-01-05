@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,15 @@ import android.widget.Toast;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +48,7 @@ public class TrayFragment extends Fragment {
     private View rootView;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    List<Book> contentList;
+    List<TrayItem> contentList;
 
     CardGridArrayAdapter mCardArrayAdapter;
     private int stackSize = 0;
@@ -138,8 +148,7 @@ public class TrayFragment extends Fragment {
                 location = "("+latitude+", "+longitude+")";
 
                 //new Thread(this).run();
-                //new getContent().execute();
-                initIntroActivityList (rootView);
+                new getContent().execute();
             }else{
 
                 //gpsT.showSettingsAlert();
@@ -160,8 +169,73 @@ public class TrayFragment extends Fragment {
 
     }
 
+    class getContent extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            contentList = new ArrayList<TrayItem>();
 
+        }
 
+        protected String doInBackground(String... args) {
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            try {
+                String url = Defaults.API_URL + "public/mybooks/" + user_id;
+                HttpResponse response = httpClient
+                        .execute(new HttpGet(url));
+                Log.d("url", "url:" + url);
+
+                InputStream is = response.getEntity().getContent();
+
+                JsonFactory factory = new JsonFactory();
+
+                JsonParser jsonParser = factory.createJsonParser(is);
+
+                JsonToken token = jsonParser.nextToken();
+
+                // Expected JSON is an array so if current token is "[" then while
+                // we don't get
+                // "]" we will keep parsing
+                if (token == JsonToken.START_ARRAY) {
+                    while (token != JsonToken.END_ARRAY) {
+                        // Inside array there are many objects, so it has to start
+                        // with "{" and end with "}"
+                        token = jsonParser.nextToken();
+                        if (token == JsonToken.START_OBJECT) {
+
+                            while (token != JsonToken.END_OBJECT) {
+                                // Each object has a name which we will use to
+                                // identify the type.
+                                token = jsonParser.nextToken();
+                                if (token == JsonToken.FIELD_NAME) {
+                                    String objectName = jsonParser.getCurrentName();
+                                    // jsonParser.nextToken();
+                                    //if (0 == objectName.compareToIgnoreCase("CONTENT")) {
+                                    TrayItem trayItem = new TrayItem();
+                                    trayItem.parse(jsonParser);
+                                    //create card for this content
+                                    contentList.add(trayItem);
+
+                                    //}
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+                return null;
+
+        }
+
+        protected void onPostExecute(String file_url) {
+            setUpTrayList(rootView);
+        }
+
+    }
     public static class allowLocationDialog extends DialogFragment {
 
         @Override
@@ -206,7 +280,7 @@ public class TrayFragment extends Fragment {
     }
 
 
-    private void initIntroActivityList (View rootview)
+    private void setUpTrayList (View rootview)
     {
         gridView.setVisibility(View.VISIBLE);
         rlloading.setVisibility(View.GONE);

@@ -374,7 +374,7 @@ public class NavigationDrawerFragment extends Fragment {
 
             Log.d("im", "im: " + image_value);
 
-            RoundedImageView imv1 = (RoundedImageView)rowView.findViewById(R.id.imageView1);
+            RoundedImageView imv1 = (RoundedImageView)rowView.findViewById(R.id.roundendImageView);
 
             String final_image_value="";
 
@@ -524,6 +524,8 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
     }
 
     private void selectItem(int position) {

@@ -8,7 +8,7 @@
     <com.infinitedimensions.somanami.RoundedImageView
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:id="@+id/imageView1"
+        android:id="@+id/roundendImageView"
         android:layout_margin="12dp"
         android:src="@drawable/app_icon"/>
 
