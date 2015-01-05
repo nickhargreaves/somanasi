@@ -67,4 +67,9 @@
     <string name="lend_book">Lend Book</string>
     <string name="due_date">Date Due</string>
     <string name="select_due_date">Select due date</string>
+
+    <!--tray-->
+    <string name="borrowed_books">Borrowed Books</string>
+    <string name="lent_books">Lent Books</string>
+
 </resources>

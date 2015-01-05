@@ -1,1 +1,2 @@
-include ':app', ':somanamigcm'
+include ':app'
+include ':viewPageIndicatorlibrary'

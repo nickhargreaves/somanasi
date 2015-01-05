@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,8 +59,22 @@ public class MainActivity extends ActionBarActivity
     }
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+    Log.d("pos", "pos: " + position);
 
-        if(position ==0){
+        if(position == 1){
+
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
+                    .commit();
+        }else if(position == 2){
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, TrayFragment.newInstance(position + 1))
+                    .commit();
+        }else{
             if(getIntent().hasExtra("notifications")){
                 //show notifications
                 getIntent().removeExtra("notifications");
@@ -76,18 +91,6 @@ public class MainActivity extends ActionBarActivity
                         .commit();
            }
 
-        }else if(position ==1){
-            // update the main content by replacing fragments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
-                    .commit();
-        }else if(position ==2){
-            // update the main content by replacing fragments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, TrayFragment.newInstance(position + 1))
-                    .commit();
         }
 
 

@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Somanami.iml" filepath="$PROJECT_DIR$/Somanami.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/somanamigcm/somanamigcm.iml" filepath="$PROJECT_DIR$/somanamigcm/somanamigcm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/viewPageIndicatorlibrary/viewPageIndicatorlibrary.iml" filepath="$PROJECT_DIR$/viewPageIndicatorlibrary/viewPageIndicatorlibrary.iml" />
     </modules>
   </component>
 </project>

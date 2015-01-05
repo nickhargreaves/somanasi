@@ -159,4 +159,7 @@
     <dimen name="card_section_container_padding_right">15dp</dimen>
     <dimen name="card_section_title_margin_top">10dp</dimen>
 
+    <dimen name="card_large_text">25.0sp</dimen>
+    <dimen name="card_medium_text">18.0sp</dimen>
+    <dimen name="card_small_text">14.0sp</dimen>
 </resources>
