@@ -61,18 +61,18 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
     Log.d("pos", "pos: " + position);
 
-        if(position == 1){
+        if(position == 2){
 
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, MyBooksFragment.newInstance(position + 1))
+                    .replace(R.id.container, MyBooksFragment.newInstance(position))
                     .commit();
-        }else if(position == 2){
+        }else if(position == 3){
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, TrayFragment.newInstance(position + 1))
+                    .replace(R.id.container, TrayFragment.newInstance(position))
                     .commit();
         }else{
             if(getIntent().hasExtra("notifications")){
@@ -87,7 +87,7 @@ public class MainActivity extends ActionBarActivity
                 //show library
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, LibraryFragment.newInstance(position + 1))
+                        .replace(R.id.container, LibraryFragment.newInstance(1))
                         .commit();
            }
 

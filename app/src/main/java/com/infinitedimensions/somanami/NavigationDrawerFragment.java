@@ -196,10 +196,9 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(adClass);
 
-
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
-
+        addDrawerHeader();
 
         return mDrawerListView;
     }
@@ -230,8 +229,8 @@ public class NavigationDrawerFragment extends Fragment {
 
         getActivity().finish();
     }
-    private void setUpFriendsList() {
 
+    private void addDrawerHeader(){
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View header = (View) inflater.inflate(R.layout.drawer_header_view,
@@ -258,6 +257,12 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
         mDrawerListView.addHeaderView(header, null, false);
+    }
+
+    private void setUpFriendsList() {
+        LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 
         View footer_divider = (View) inflater.inflate(
                 R.layout.drawer_list_footer_divider, null, false);
