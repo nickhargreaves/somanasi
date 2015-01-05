@@ -2,7 +2,6 @@ package com.infinitedimensions.somanami.gcm;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.infinitedimensions.somanami.Defaults;
@@ -43,7 +42,6 @@ public class ReturnBook extends AsyncTask<Void, Void, String> {
         URI url = null;
         try {
             String urlstring =Defaults.API_URL + "public/return_book/" + tray_item + "/" + user_id + "/" + borrowed;
-            Log.d("returnurl", urlstring);
             url = new URI(urlstring);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block

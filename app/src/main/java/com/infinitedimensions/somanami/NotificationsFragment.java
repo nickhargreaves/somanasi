@@ -29,7 +29,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -183,42 +186,50 @@ public class NotificationsFragment extends Fragment {
             card.setOnClickListener(new Card.OnCardClickListener() {
                 @Override
                 public void onClick(Card card, View view) {
-                    //Respond to book request
-                    final Dialog dialog = new Dialog(getActivity());
-                    dialog.setTitle(getResources().getString(R.string.lend_book));
+                   if(content.getType().equals("0")){
 
-                    dialog.setContentView(R.layout.dialog_give_book);
+                       //Respond to book request
+                       final Dialog dialog = new Dialog(getActivity());
+                       dialog.setTitle(getResources().getString(R.string.lend_book));
 
-                    //datepicker stuff
-                    final DatePicker dpResult;;
-                    int year;
-                    int month;
-                    int day;
-                    final int DATE_DIALOG_ID = 999;
+                       dialog.setContentView(R.layout.dialog_give_book);
 
-                    dpResult = (DatePicker)dialog.findViewById(R.id.datePicker);
+                       //datepicker stuff
+                       final DatePicker dpResult;;
+                       int year;
+                       int month;
+                       int day;
+                       final int DATE_DIALOG_ID = 999;
 
-                    //set onclicklisteners
-                    dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.cancel();
-                        }
-                    });
+                       dpResult = (DatePicker)dialog.findViewById(R.id.datePicker);
 
-                    dialog.findViewById(R.id.button_lend).setOnClickListener(new View.OnClickListener(){
-                        @Override
-                        public void onClick(View view){
+                       //set onclicklisteners
+                       dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
+                           @Override
+                           public void onClick(View view) {
+                               dialog.cancel();
+                           }
+                       });
 
-                            String date = URLEncoder.encode(dpResult.getYear() + "-" + dpResult.getMonth() + "-" + dpResult.getDayOfMonth()) ;
+                       dialog.findViewById(R.id.button_lend).setOnClickListener(new View.OnClickListener(){
+                           @Override
+                           public void onClick(View view){
 
-                            new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
-                            dialog.cancel();
-                        }
-                    });
+                               long dateTime = dpResult.getCalendarView().getDate();
+                               Date dateD = new Date(dateTime);
 
-                    dialog.show();
+                               DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                               String formattedDate = dateFormat.format(dateD);
 
+                               String date = URLEncoder.encode(formattedDate) ;
+
+                               new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
+                               dialog.cancel();
+                           }
+                       });
+
+                       dialog.show();
+                   }
 
                 }
             });
