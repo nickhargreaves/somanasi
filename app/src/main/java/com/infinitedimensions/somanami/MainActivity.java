@@ -114,9 +114,8 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getResources().getStringArray(R.array.nav_items)[2];
                 break;
             case 8:
-                String[] names = somevalue.split(" ");
 
-                mTitle = names[0] + "'s Books";
+                mTitle = somevalue;
                 break;
             case 9:
                 mTitle = "My notifications";

@@ -72,4 +72,6 @@
     <string name="borrowed_books">Borrowed Books</string>
     <string name="lent_books">Lent Books</string>
 
+    <string name="lent_note">You currently have no lent books</string>
+    <string name="borrow_note">You currently have no borrowed books!</string>
 </resources>

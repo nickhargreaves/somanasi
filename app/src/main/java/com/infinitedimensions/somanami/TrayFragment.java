@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.infinitedimensions.somanami.gcm.ReturnBook;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -97,6 +98,9 @@ public class TrayFragment extends Fragment {
         notification = (TextView)rootView.findViewById(R.id.notification);
 
         loading_gif = (ImageView)rootView.findViewById(R.id.ivLoading);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        user_id = prefs.getString("user_id", "0");
 
         rlloading = (RelativeLayout)rootView.findViewById(R.id.rlLoading);
         rlloading.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +301,6 @@ public class TrayFragment extends Fragment {
 
         for(int i = 0; i<contentList.size(); i++){
             TrayItem trayItem = contentList.get(i);
-            Log.d("tryitem", "trayitem:" + trayItem.getBorrowed() + ":" + trayItem.getBook_title());
             if(trayItem.getBorrowed().equals("1")){
                 borrowed.add(trayItem);
             }else{
@@ -305,47 +308,56 @@ public class TrayFragment extends Fragment {
             }
         }
 
-        MyAdapter adapter = new MyAdapter(getActivity().getSupportFragmentManager(), borrowed);
-        ViewPager pager = ((ViewPager)rootview.findViewById(R.id.pager1));
-
-        pager.setId((int)(Math.random()*10000));
-        pager.setOffscreenPageLimit(5);
-
-        pager.setAdapter(adapter);
-
-        //Bind the title indicator to the adapter
-        CirclePageIndicator indicator = (CirclePageIndicator)rootview.findViewById(R.id.circles1);
-        indicator.setViewPager(pager);
-        indicator.setSnap(true);
-
-
         final float density = getResources().getDisplayMetrics().density;
 
-        indicator.setRadius(5 * density);
-        indicator.setFillColor(0xFFFF0000);
-        indicator.setPageColor(0xFFaaaaaa);
-        //indicator.setStrokeColor(0xFF000000);
-        //indicator.setStrokeWidth(2 * density);
+        if(borrowed.size()==0){
+            (rootview.findViewById(R.id.borrow_note)).setVisibility(View.VISIBLE);
+            (rootview.findViewById(R.id.pager1)).setVisibility(View.GONE);
+        }else{
+            MyAdapter adapter = new MyAdapter(getActivity().getSupportFragmentManager(), borrowed);
+            ViewPager pager = ((ViewPager)rootview.findViewById(R.id.pager1));
 
+            pager.setId((int)(Math.random()*10000));
+            pager.setOffscreenPageLimit(5);
 
-        MyAdapter adapter2 = new MyAdapter(getActivity().getSupportFragmentManager(), lent);
-        ViewPager pager2 = ((ViewPager)rootView.findViewById(R.id.pager2));
+            pager.setAdapter(adapter);
 
-        pager2.setId((int)(Math.random()*10000));
-        pager2.setOffscreenPageLimit(5);
+            //Bind the title indicator to the adapter
+            CirclePageIndicator indicator = (CirclePageIndicator)rootview.findViewById(R.id.circles1);
+            indicator.setViewPager(pager);
+            indicator.setSnap(true);
 
-        pager2.setAdapter(adapter2);
+            indicator.setRadius(5 * density);
+            indicator.setFillColor(0xFFFF0000);
+            indicator.setPageColor(0xFFaaaaaa);
+            //indicator.setStrokeColor(0xFF000000);
+            //indicator.setStrokeWidth(2 * density);
+        }
 
-        //Bind the title indicator to the adapter
-        CirclePageIndicator indicator2 = (CirclePageIndicator)rootview.findViewById(R.id.circles2);
-        indicator2.setViewPager(pager2);
-        indicator2.setSnap(true);
+        if(lent.size()==0){
+            (rootview.findViewById(R.id.lent_note)).setVisibility(View.VISIBLE);
+            (rootview.findViewById(R.id.pager2)).setVisibility(View.GONE);
+        }else {
 
-        indicator2.setRadius(5 * density);
-        indicator2.setFillColor(0xFFFF0000);
-        indicator2.setPageColor(0xFFaaaaaa);
-        //indicator.setStrokeColor(0xFF000000);
-        //indicator.setStrokeWidth(2 * density);
+            MyAdapter adapter2 = new MyAdapter(getActivity().getSupportFragmentManager(), lent);
+            ViewPager pager2 = ((ViewPager) rootView.findViewById(R.id.pager2));
+
+            pager2.setId((int) (Math.random() * 10000));
+            pager2.setOffscreenPageLimit(5);
+
+            pager2.setAdapter(adapter2);
+
+            //Bind the title indicator to the adapter
+            CirclePageIndicator indicator2 = (CirclePageIndicator) rootview.findViewById(R.id.circles2);
+            indicator2.setViewPager(pager2);
+            indicator2.setSnap(true);
+
+            indicator2.setRadius(5 * density);
+            indicator2.setFillColor(0xFFFF0000);
+            indicator2.setPageColor(0xFFaaaaaa);
+            //indicator.setStrokeColor(0xFF000000);
+            //indicator.setStrokeWidth(2 * density);
+        }
 
     }
 
@@ -367,7 +379,7 @@ public class TrayFragment extends Fragment {
         public Fragment getItem(int position) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("trayItem", new TrayItemsDataHelper(trayItems.get(position)));
-
+            bundle.putString("user_id", user_id);
             Fragment f = new MyFragment();
             f.setArguments(bundle);
 
@@ -378,6 +390,7 @@ public class TrayFragment extends Fragment {
     public static final class MyFragment extends Fragment {
 
         TrayItem trayItem;
+        String _user_id;
 
         /**
          * When creating, retrieve this instance's number from its arguments.
@@ -388,6 +401,8 @@ public class TrayFragment extends Fragment {
 
             TrayItemsDataHelper trd = (TrayItemsDataHelper)(getArguments().getSerializable("trayItem"));
             trayItem = trd.getTrayItem();
+            _user_id = getArguments().getString("user_id");
+
 
         }
 
@@ -396,6 +411,40 @@ public class TrayFragment extends Fragment {
                                  Bundle savedInstanceState) {
 
             ViewGroup root = (ViewGroup) inflater.inflate(R.layout.card_pager_textview, null);
+            root.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+
+                        //return or cancel
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                        builder1.setMessage("Mark as returned?");
+                        builder1.setCancelable(true);
+                        builder1.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        new ReturnBook(getActivity(), trayItem.getId(), _user_id, trayItem.getBorrowed()).execute();
+
+
+                                        dialog.cancel();
+
+                                    }
+                                });
+                        builder1.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+
+                                        dialog.cancel();
+
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+
+
+                }
+            });
 
             ((TextView)root.findViewById(R.id.title)).setText(trayItem.getBook_title());
 
@@ -415,6 +464,17 @@ public class TrayFragment extends Fragment {
             }
             //set user thumb
             RoundedImageView userThumb = (RoundedImageView)root.findViewById(R.id.userThumb);
+            userThumb.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    //open user's book list
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, FriendBooksFragment.newInstance(8, trayItem.getPerson_id(), trayItem.getPerson_name()))
+                            .commit();
+                }
+            });
+
             String userThumbUrl = "http://graph.facebook.com/"+trayItem.getPerson_id()+"/picture";
             String final_image_value="";
 

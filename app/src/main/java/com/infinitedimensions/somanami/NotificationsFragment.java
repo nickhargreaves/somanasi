@@ -267,7 +267,7 @@ public class NotificationsFragment extends Fragment {
                         //open user's book list
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.container, FriendBooksFragment.newInstance(8, user_id, name + "'s library"))
+                                .replace(R.id.container, FriendBooksFragment.newInstance(8, user_id, name))
                                 .commit();
 
                     }
