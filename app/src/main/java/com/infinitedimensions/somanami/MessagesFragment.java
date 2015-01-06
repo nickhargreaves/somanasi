@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -307,8 +308,17 @@ public class MessagesFragment extends Fragment {
                 friend_names.add((messagesList.get(i)).getMesage());
             }
 
-            AdapterClass2 adClass = new AdapterClass2(getActivity(), friend_names);
-            gridView.setAdapter(adClass);;
+            final AdapterClass2 adClass = new AdapterClass2(getActivity(), friend_names);
+            gridView.setAdapter(adClass);
+
+            //to scroll the list view to bottom on data change
+            adClass.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    gridView.setSelection(adClass.getCount() - 1);
+                }
+            });
 
         }
     }
