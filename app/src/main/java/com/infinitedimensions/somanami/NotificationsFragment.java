@@ -155,7 +155,7 @@ public class NotificationsFragment extends Fragment {
             String name = names[0];
 
             //Add thumbnail
-            String imageSource = "http://graph.facebook.com/"+content.getUser()+"/picture";
+            String imageSource = "http://graph.facebook.com/"+content.getUser()+"/picture?type=normal";
 
             try
             {

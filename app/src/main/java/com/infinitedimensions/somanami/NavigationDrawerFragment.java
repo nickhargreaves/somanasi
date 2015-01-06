@@ -370,7 +370,7 @@ public class NavigationDrawerFragment extends Fragment {
 
             String id = ImageValue.get(position);
 
-            String image_value = "http://graph.facebook.com/"+id+"/picture";
+            String image_value = "http://graph.facebook.com/"+id+"/picture?type=normal";
 
             Log.d("im", "im: " + image_value);
 

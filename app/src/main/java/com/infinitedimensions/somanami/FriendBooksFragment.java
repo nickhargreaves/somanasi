@@ -83,6 +83,7 @@ public class FriendBooksFragment extends Fragment {
     private static final String USER_NAME = "user_name";
     private static final String USER_ID = "user_id";
 
+    private String friend_id;
 
     private int mStackLevel = 0;
 
@@ -138,7 +139,7 @@ public class FriendBooksFragment extends Fragment {
 
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, MessagesFragment.newInstance(10, ""))
+                    .replace(R.id.container, MessagesFragment.newInstance(10, getArguments().getString(USER_ID), getArguments().getString(USER_NAME)))
                     .commit();
 
             return true;

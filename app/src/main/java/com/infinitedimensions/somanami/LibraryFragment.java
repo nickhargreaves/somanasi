@@ -464,7 +464,7 @@ public class LibraryFragment extends Fragment {
     }
 
     public static void setOwnerInformation(View v, String id, Context ctx, String name){
-        String image_value = "http://graph.facebook.com/"+id+"/picture";
+        String image_value = "http://graph.facebook.com/"+id+"/picture?type=normal";
 
         RoundedImageView imv1 = (RoundedImageView)v.findViewById(R.id.ownerImage);
         TextView ownerName = (TextView)v.findViewById(R.id.ownerName);
