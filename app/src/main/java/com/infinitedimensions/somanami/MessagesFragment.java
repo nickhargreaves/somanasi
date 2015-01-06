@@ -1,300 +1,102 @@
 package com.infinitedimensions.somanami;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.infinitedimensions.somanami.gcm.NotificationGCM;
+import com.infinitedimensions.somanami.gcm.RespondRequest;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardGridArrayAdapter;
+import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.internal.CardThumbnail;
+import it.gmariotti.cardslib.library.view.CardGridView;
 
 public class MessagesFragment extends Fragment {
 
     private View rootView;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    List<Book> contentList;
-
-    CardGridArrayAdapter mCardArrayAdapter;
-    private int stackSize = 0;
-
-
-    private GPSTracker gpsT;
-    private double latitude;
-    private double longitude;
-    private String location="(0, 0)";
-
-
-    private ConnectionDetector cd;
-    private Boolean isInternetPresent;
-
-    private String last_item = "0";
+    CardGridView gridView;
+    SimpleDBHandler dbHandler;
     private ArrayList<Card> cards;
-    SharedPreferences prefs;
+    CardGridArrayAdapter mCardArrayAdapter;
+    List<NotificationGCM> notificationGCMList;
+    private ImageView loading_gif;
+    private GifAnimationDrawable little;
 
-    SharedPreferences.Editor editor;
-    ListView gridView;
-
-    private static final String USER_ID = "user_id";
-    private static final String USER_NAME = "user_name";
-
-
-    private int mStackLevel = 0;
-
-    private SimpleDBHandler dbHandler;
-
-    private List<NotificationGCM> messagesList;
-
-    private MenuItem friendIcon = null;
-
-    private Drawable friendDrawable;
-
-    private TextView chatText;
-    private ImageView buttonSend;
+    private RelativeLayout rlloading;
+    private TextView notification;
+    private SharedPreferences pref;
+    private String user_id;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
                              Bundle savedInstanceState) {
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        user_id = pref.getString("user_id", "0");
+
+        rootView = inflater.inflate(R.layout.activity_notifcations, container, false);
+        gridView = (CardGridView) rootView.findViewById(R.id.resultsGrid);
+        notification = (TextView)rootView.findViewById(R.id.notification);
+
+        loading_gif = (ImageView)rootView.findViewById(R.id.ivLoading);
+
+        rlloading = (RelativeLayout)rootView.findViewById(R.id.rlLoading);
+
+        // and add the GifAnimationDrawable
+        try{
+
+            little = new GifAnimationDrawable(getResources().openRawResource(R.raw.loading_anim));
+            little.setOneShot(false);
+            loading_gif.setImageDrawable(little);
+        }catch(IOException ioe){
+
+        }
         dbHandler = new SimpleDBHandler(getActivity().getApplicationContext(), null, null, 1);
+        cards = new ArrayList<Card>();
 
-
-        rootView = inflater.inflate(R.layout.fragment_messages, container, false);
-
-        gridView = (ListView)rootView.findViewById(R.id.listView1);
-
-
-
-        chatText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    return sendChatMessage();
-                }
-                return false;
-            }
-        });
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                sendChatMessage();
-            }
-        });
-
-        checkConditions();
+        notification.setText("");
+        new GetNotifications().execute();
         return rootView;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
 
-        menu.clear();
-
-        inflater.inflate(R.menu.friend, menu);
-
-        friendIcon = menu.getItem(0);
-
-        new setIcon().execute();
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_message) {
-
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, FriendBooksFragment.newInstance(8, getArguments().getString(USER_ID), getArguments().getString(USER_NAME)))
-                    .commit();
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    class setIcon extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-
-        }
-        protected String doInBackground(String... args) {
-
-            String fid = getArguments().getString(USER_ID);
-            String image_value = "http://graph.facebook.com/"+fid+"/picture?type=normal";
-
-            Log.d("im", "im: " + image_value);
-
-            String final_image_value="";
-
-            try
-            {
-                URL obj = new URL(image_value);
-                URLConnection conn = obj.openConnection();
-                Map<String, List<String>> map = conn.getHeaderFields();
-
-                final_image_value = map.get("Location").toString();
-
-                final_image_value = final_image_value.replace("[", "");
-
-                final_image_value = final_image_value.replace("]", "");
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                URL url = new URL(final_image_value);
-                InputStream is = url.openStream();
-                friendDrawable = Drawable.createFromStream(is, "src");
-
-            } catch (MalformedURLException e) {
-                // e.printStackTrace();
-            } catch (IOException e) {
-                // e.printStackTrace();
-            }
-
-            return null;
-        }
-        protected void onPostExecute(String file_url) {
-
-            if(friendIcon!=null){
-                friendIcon.setIcon(friendDrawable);
-            }
-
-        }
-    }
-
-
-
-    public void checkConditions(){
-        //check if has network
-        // creating connection detector class instance
-        cd = new ConnectionDetector(getActivity().getApplicationContext());
-
-        //get Internet status
-        isInternetPresent = cd.isConnectingToInternet();
-
-        if(!isInternetPresent){
-
-            Toast.makeText(getActivity().getApplicationContext(), "Check your internet settings!", Toast.LENGTH_LONG).show();
-            //TODO: show cache
-
-
-            //TODO:timer to check settings
-
-        }else{
-            //check location
-            gpsT = new GPSTracker(getActivity().getApplicationContext());
-
-            // check if GPS enabled
-            if(gpsT.canGetLocation()){
-
-                latitude = gpsT.getLatitude();
-                longitude = gpsT.getLongitude();
-
-                location = "("+latitude+", "+longitude+")";
-
-                //new Thread(this).run();
-                new getContent().execute();
-            }else{
-
-                //gpsT.showSettingsAlert();
-
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                // Create and show the dialog.
-                allowLocationDialog newFragment = new allowLocationDialog ();
-
-
-                newFragment.show(ft, "dialog");
-
-                //TODO:timer to check settings
-
-            }
-        }
-
-    }
-
-
-    public static class allowLocationDialog extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle("GPS Settings")
-                    .setMessage("Do you want to go to settings menu? You also need a view of the sky for it work properly.")
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // cancel
-
-                        }
-                    })
-                    .setPositiveButton(android.R.string.yes,  new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            getActivity().getApplicationContext().startActivity(intent);
-                        }
-                    })
-                    .create();
-        }
-    }
-
-    public static MessagesFragment newInstance(int sectionNumber, String _friend_id, String _friend_name) {
+    public MessagesFragment newInstance(int sectionNumber) {
         MessagesFragment fragment = new MessagesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putString(USER_ID, _friend_id);
-        args.putString(USER_NAME, _friend_name);
-
-        fragment.setHasOptionsMenu(true);
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -304,111 +106,219 @@ public class MessagesFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER), "");
+        ((MainActivity) activity).onSectionAttached(
+                getArguments().getInt(ARG_SECTION_NUMBER), "");
     }
 
+    class GetNotifications extends AsyncTask<String, String, String> {
 
-    class getContent extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-
+            gridView.setVisibility(View.GONE);
+            rlloading.setVisibility(View.VISIBLE);
         }
-        protected String doInBackground(String... args) {
-            messagesList = dbHandler.getNotifications();
+
+        @Override
+        protected String doInBackground(String... strings) {
+            notificationGCMList = dbHandler.getNotifications();
 
             return null;
         }
-        protected void onPostExecute(String file_url) {
+        @Override
+        protected void onPostExecute(String file_url){
+            displayNotifications();
+            rlloading.setVisibility(View.GONE);
+            gridView.setVisibility(View.VISIBLE);
+        }
+    }
 
-            List<String> friend_names = new ArrayList<String>();
+    public void displayNotifications() {
 
-            for(int i =0; i<messagesList.size(); i++){
-                friend_names.add((messagesList.get(i)).getMesage());
+
+        Log.d("totalstuff", "total: " + notificationGCMList.size());
+
+        for (int i = 0; i < notificationGCMList.size(); i++) {
+            //get bookmark in list
+            final NotificationGCM content = notificationGCMList.get(i);
+
+            //Create a Card
+            Card card = new Card(getActivity().getApplicationContext());
+
+            //Create a CardHeader
+            CustomHeaderInnerCard header = new CustomHeaderInnerCard(getActivity().getApplicationContext(), content.getMesage(), content.getType());
+
+            //Add Header to card
+            card.addCardHeader(header);
+
+            String[] names = content.getMesage().split(" ");
+            String name = names[0];
+
+            //Add thumbnail
+            String imageSource = "http://graph.facebook.com/"+content.getUser()+"/picture?type=normal";
+
+            try
+            {
+                URL obj = new URL(imageSource);
+                URLConnection conn = obj.openConnection();
+                Map<String, List<String>> map = conn.getHeaderFields();
+
+                imageSource = map.get("Location").toString();
+
+                imageSource = imageSource.replace("[", "");
+
+                imageSource = imageSource.replace("]", "");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            final AdapterClass2 adClass = new AdapterClass2(getActivity(), friend_names);
-            gridView.setAdapter(adClass);
+            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), imageSource, content.getUser(), name);
 
-            //to scroll the list view to bottom on data change
-            adClass.registerDataSetObserver(new DataSetObserver() {
+            thumbnail.setExternalUsage(true);
+            //thumbnail.setUrlResource(content.getThumb_url());
+
+            card.addCardThumbnail(thumbnail);
+
+
+            //Listeners
+            card.setOnClickListener(new Card.OnCardClickListener() {
                 @Override
-                public void onChanged() {
-                    super.onChanged();
-                    gridView.setSelection(adClass.getCount() - 1);
+                public void onClick(Card card, View view) {
+                    if(content.getType().equals("0")){
+
+                        //Respond to book request
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setTitle(getResources().getString(R.string.lend_book));
+
+                        dialog.setContentView(R.layout.dialog_give_book);
+
+                        //datepicker stuff
+                        final DatePicker dpResult;;
+                        int year;
+                        int month;
+                        int day;
+                        final int DATE_DIALOG_ID = 999;
+
+                        dpResult = (DatePicker)dialog.findViewById(R.id.datePicker);
+
+                        //set onclicklisteners
+                        dialog.findViewById(R.id.button_discard).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        dialog.findViewById(R.id.button_lend).setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view){
+
+                                long dateTime = dpResult.getCalendarView().getDate();
+                                Date dateD = new Date(dateTime);
+
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                String formattedDate = dateFormat.format(dateD);
+
+                                String date = URLEncoder.encode(formattedDate) ;
+
+                                new RespondRequest(getActivity().getApplicationContext(),user_id, content.getUser(), content.getBook(), date).execute();
+                                dialog.cancel();
+                            }
+                        });
+
+                        dialog.show();
+                    }
+
                 }
             });
 
+            cards.add(card);
         }
+        //array adapter
+        mCardArrayAdapter = new CardGridArrayAdapter(getActivity().getApplicationContext(),cards);
+
+        if (gridView!=null){
+            gridView.setAdapter(mCardArrayAdapter);
+        }
+
     }
 
-    public class AdapterClass2  extends ArrayAdapter<String> {
-        Context context;
-        private List<String> TextValue;
+    public class CustomThumbCard extends CardThumbnail {
+        private String imageSource;
+        private Context ctx;
+        private String user_id;
+        private String name;
 
-        public AdapterClass2(Context context, List<String> TextValue) {
-            super(context, R.layout.drawer_list_footer_row, TextValue);
-            this.context = context;
-            this.TextValue= TextValue;
-
+        public CustomThumbCard(Context context, String _imageSource, String _user_id, String _name) {
+            super(context);
+            this.ctx = context;
+            this.imageSource = _imageSource;
+            this.user_id = _user_id;
+            this.name = _name;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // TODO Auto-generated method stub
+        public void setupInnerViewElements(ViewGroup parent, View viewImage) {
+            if (viewImage!=null){
 
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                if (imageSource.trim().length() != 0) {
+                    Picasso.with(ctx)
+                            .load(imageSource)
+                            .placeholder(R.drawable.default_thumb)
+                            .error(R.drawable.cancel)
+                            .into((RoundedImageView) viewImage);
+                }
+
+                viewImage.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+
+                        //open user's book list
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.container, FriendBooksFragment.newInstance(8, user_id, name))
+                                .commit();
+
+                    }
+
+                });
 
 
-            ViewHolder holder;
-            if(convertView == null)
-            {
-                holder = new ViewHolder();
-                convertView = inflater.inflate(R.layout.messages_row, parent, false);
-                holder.message = (TextView) convertView.findViewById(R.id.message_text);
-                convertView.setTag(holder);
+                DisplayMetrics metrics=parent.getResources().getDisplayMetrics();
+                viewImage.getLayoutParams().width = (int)(50*metrics.density);
+                viewImage.getLayoutParams().height = (int)(50*metrics.density);
             }
-            else
-                holder = (ViewHolder) convertView.getTag();
-
-            holder.message.setText(messagesList.get(position).getMesage());
-
-            LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
-            //check if it is a status message then remove background, and change text color.
-
-                //Check whether message is mine to show green background and align to right
-                if(messagesList.get(position).getType().equals("0"))
-                {
-                    holder.message.setBackgroundResource(R.drawable.bubble_a);
-                    lp.gravity = Gravity.RIGHT;
-                }
-                //If not mine then it is from sender to show orange background and align to left
-                else
-                {
-                    holder.message.setBackgroundResource(R.drawable.bubble_b);
-                    lp.gravity = Gravity.LEFT;
-                }
-
-                holder.message.setLayoutParams(lp);
-                //holder.message.setTextColor(getResources().getColor(R.color.counter_text_color));
-
-            return convertView;
-
         }
-        private class ViewHolder
-        {
-            TextView message;
+    }
+
+    public class CustomHeaderInnerCard extends CardHeader {
+
+        private String desc;
+        private String type;
+
+        public CustomHeaderInnerCard(Context context, String _desc, String _type) {
+            super(context, R.layout.card_inner_header);
+            this.desc = _desc;
+            this.type = _type;
         }
 
         @Override
-        public long getItemId(int position) {
-            //Unimplemented, because we aren't using Sqlite.
-            return position;
+        public void setupInnerViewElements(ViewGroup parent, View view) {
+
+            if (view!=null){
+                TextView t1 = (TextView) view.findViewById(R.id.title);
+
+                if (t1!=null)
+                    t1.setText(desc);
+                t1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+
+
+                TextView t2 = (TextView) view.findViewById(R.id.subtitle);
+                if (t2!=null)
+                    t2.setVisibility(View.GONE);
+            }
         }
-
     }
-
-
 }
