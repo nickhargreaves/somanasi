@@ -20,17 +20,14 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.infinitedimensions.somanami.gcm.NotificationGCM;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +44,6 @@ public class MessagesFragment extends Fragment {
     CardGridArrayAdapter mCardArrayAdapter;
     private int stackSize = 0;
 
-    private ImageView loading_gif;
-    private GifAnimationDrawable little;
-
-    private RelativeLayout rlloading;
 
     private GPSTracker gpsT;
     private double latitude;
@@ -60,8 +53,6 @@ public class MessagesFragment extends Fragment {
 
     private ConnectionDetector cd;
     private Boolean isInternetPresent;
-
-    private TextView notification;
 
     private String last_item = "0";
     private ArrayList<Card> cards;
@@ -88,27 +79,8 @@ public class MessagesFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.fragment_messages, container, false);
 
-        gridView = (ListView)rootView.findViewById(R.id.messagesList);
-        notification = (TextView)rootView.findViewById(R.id.notification);
+        gridView = (ListView)rootView.findViewById(R.id.listView1);
 
-        loading_gif = (ImageView)rootView.findViewById(R.id.ivLoading);
-
-        rlloading = (RelativeLayout)rootView.findViewById(R.id.rlLoading);
-        rlloading.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkConditions();
-            }
-        });
-        // and add the GifAnimationDrawable
-        try{
-
-            little = new GifAnimationDrawable(getResources().openRawResource(R.raw.loading_anim));
-            little.setOneShot(false);
-            loading_gif.setImageDrawable(little);
-        }catch(IOException ioe){
-
-        }
 
         checkConditions();
         return rootView;
@@ -126,10 +98,6 @@ public class MessagesFragment extends Fragment {
 
 
     public void checkConditions(){
-        notification.setText("Fetching messages with username");
-
-        gridView.setVisibility(View.GONE);
-        rlloading.setVisibility(View.VISIBLE);
         //check if has network
         // creating connection detector class instance
         cd = new ConnectionDetector(getActivity().getApplicationContext());
@@ -144,7 +112,6 @@ public class MessagesFragment extends Fragment {
 
 
             //TODO:timer to check settings
-            notification.setText("Tap to retry!");
 
         }else{
             //check location
@@ -172,14 +139,11 @@ public class MessagesFragment extends Fragment {
                 newFragment.show(ft, "dialog");
 
                 //TODO:timer to check settings
-                notification.setText("Tap to retry!");
 
             }
         }
 
-
     }
-
 
 
     public static class allowLocationDialog extends DialogFragment {
@@ -250,10 +214,7 @@ public class MessagesFragment extends Fragment {
             }
 
             AdapterClass2 adClass = new AdapterClass2(getActivity(), friend_names);
-            gridView.setAdapter(adClass);
-
-            rlloading.setVisibility(View.GONE);
-            gridView.setVisibility(View.VISIBLE);
+            gridView.setAdapter(adClass);;
 
         }
     }
@@ -307,7 +268,7 @@ public class MessagesFragment extends Fragment {
                 }
 
                 holder.message.setLayoutParams(lp);
-                holder.message.setTextColor(getResources().getColor(R.color.counter_text_color));
+                //holder.message.setTextColor(getResources().getColor(R.color.counter_text_color));
 
             return convertView;
 

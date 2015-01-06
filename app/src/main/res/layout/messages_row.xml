@@ -15,7 +15,6 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:text="Medium Text"
-        android:textColor="@color/counter_text_bg"
         android:textSize="20sp" />
 
 </LinearLayout>
