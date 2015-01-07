@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.infinitedimensions.somanami.gcm.Message;
+import com.infinitedimensions.somanami.gcm.SendMessage;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 
 import java.io.IOException;
@@ -114,7 +115,7 @@ public class MessagesFragment extends Fragment {
 
         dbHandler.addMessage(message);
         
-        //new SendMessage(message).execute();
+        new SendMessage(getActivity(), user_id, getArguments().getString(USER_ID), message.getMessage()).execute();
         
         chatText.setText("");
         adClass.add(message);
