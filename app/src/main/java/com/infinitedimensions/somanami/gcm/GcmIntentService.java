@@ -79,6 +79,19 @@ public class GcmIntentService extends IntentService {
                     db.addNotification(notificationGCM);
                 }
 
+                //add message to db
+                if(intent.hasExtra("message")){
+                    String messageText = extras.getString("Notice");
+                    String user = extras.getString("user");
+
+                    Message message = new Message();
+                    message.setMessage(messageText);
+                    message.setUser(user);
+                    message.setIsMine("0");
+
+                    SimpleDBHandler db = new SimpleDBHandler(getApplicationContext(), null, null, 1);
+                    db.addMessage(message);
+                }
 
                 Log.i(TAG, "Received: " + extras.toString());
             }

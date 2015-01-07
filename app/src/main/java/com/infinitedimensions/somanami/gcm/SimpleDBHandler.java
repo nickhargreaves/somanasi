@@ -128,7 +128,8 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     public List<Message> getMessages(String user_id) {
         List<Message> messagesList = new ArrayList<Message>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USER + " ='" + user_id + "' ORDER BY " + COLUMN_ID + " DESC";
+        //String selectQuery = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USER + " ='" + user_id + "'";
+        String selectQuery = "SELECT * FROM " + TABLE_MESSAGES;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

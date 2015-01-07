@@ -2,6 +2,7 @@ package com.infinitedimensions.somanami.gcm;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.infinitedimensions.somanami.Defaults;
@@ -41,7 +42,8 @@ public class SendMessage extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... arg0) {
         URI url = null;
         try {
-            url = new URI(Defaults.API_URL + "public/send_message/" + "/" + sender + "/" + recipient + "/" + message);
+            url = new URI(Defaults.API_URL + "public/send_message/" + sender + "/" + recipient + "/" + message);
+            Log.d("url'", Defaults.API_URL + "public/send_message/" + "/" + sender + "/" + recipient + "/" + message);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
