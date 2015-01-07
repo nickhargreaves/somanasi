@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,6 +60,9 @@ public class MessagesFragment extends Fragment {
     private MenuItem friendIcon = null;
     private Drawable friendDrawable;
 
+    private EditText chatText;
+    private ImageView buttonSend;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
@@ -68,6 +74,9 @@ public class MessagesFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_messages, container, false);
         gridView = (ListView) rootView.findViewById(R.id.messagesList);
 
+        chatText = (EditText)rootView.findViewById(R.id.chatText);
+        buttonSend = (ImageView)rootView.findViewById(R.id.buttonSend);
+
         dbHandler = new SimpleDBHandler(getActivity().getApplicationContext(), null, null, 1);
 
         notificationGCMList = dbHandler.getNotifications();
@@ -77,8 +86,28 @@ public class MessagesFragment extends Fragment {
         gridView.setAdapter(adClass);
 
 
+        chatText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    return sendChatMessage();
+                }
+                return false;
+            }
+        });
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sendChatMessage();
+            }
+        });
+
 
         return rootView;
+    }
+
+    public boolean sendChatMessage(){
+
+        return true;
     }
 
 
