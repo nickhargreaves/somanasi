@@ -1,10 +1,14 @@
 package com.infinitedimensions.somanami.gcm;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -13,6 +17,14 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
 
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
@@ -41,11 +53,11 @@ public class GcmIntentService extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString(), "", "", "");
+                new sendNotification(getApplicationContext(), "Send error: " + extras.toString(), "", "", "").execute();
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString(),"", "", "");
+                new sendNotification(getApplicationContext(), "Deleted messages on server: " +
+                        extras.toString(),"", "", "").execute();
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
@@ -103,7 +115,7 @@ public class GcmIntentService extends IntentService {
                 Log.i(TAG, "Received: " + extras.toString());
 
                 // Post notification of received message.
-                sendNotification(extras.getString("Notice"), user, name, note_type);
+                new sendNotification(getApplicationContext(), extras.getString("Notice"), user, name, note_type).execute();
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -113,34 +125,109 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg, String user_id, String name, String note_type) {
-        mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent i = new Intent(this, MainActivity.class);
 
-        if(!note_type.equals("")){
-            i.putExtra("note_type", note_type);
+    private class sendNotification extends AsyncTask<String, Void, Bitmap> {
+
+        Context ctx;
+        String msg;
+        String user_id;
+        String name;
+        String note_type;
+        Bitmap bmp;
+
+        public sendNotification(Context context, String _msg, String _user_id, String _name, String _note_type) {
+            super();
+            this.ctx = context;
+            this.msg = _msg;
+            this.user_id = _user_id;
+            this.name = _name;
+            this.note_type = _note_type;
         }
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
+        @Override
+        protected Bitmap doInBackground(String... params) {
 
-        String title = "Somanasi";
+            String image_value = "http://graph.facebook.com/"+this.user_id+"/picture?type=normal";
 
-        if(!name.equals("")){
-            title = name;
+            String final_image_value="";
+
+            try
+            {
+                URL obj = new URL(image_value);
+                URLConnection conn = obj.openConnection();
+                Map<String, List<String>> map = conn.getHeaderFields();
+
+                final_image_value = map.get("Location").toString();
+
+                final_image_value = final_image_value.replace("[", "");
+
+                final_image_value = final_image_value.replace("]", "");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            InputStream in;
+
+            try {
+
+                in = new URL(final_image_value).openStream();
+                this.bmp = BitmapFactory.decodeStream(in);
+                return bmp;
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        // .setSmallIcon(R.drawable.ic_stat_gcm)
-                        .setContentTitle(title)
-                        .setSmallIcon(R.drawable.app_icon)
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg);
+        @Override
+        protected void onPostExecute(Bitmap result) {
 
-        mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            super.onPostExecute(result);
+            try {
+                mNotificationManager = (NotificationManager)
+                        ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                Intent i = new Intent(ctx, MainActivity.class);
+
+                if(!note_type.equals("")){
+                    i.putExtra("note_type", note_type);
+                }
+
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, i, 0);
+
+                String title = "Somanasi";
+
+                if(!name.equals("")){
+                    title = name;
+                }
+
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(getApplicationContext())
+                                // .setSmallIcon(R.drawable.ic_stat_gcm)
+                                .setContentTitle(title)
+                                .setSmallIcon(R.drawable.app_icon)
+                                .setLargeIcon(bmp)
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(msg))
+                                .setContentText(msg);
+
+                mBuilder.setContentIntent(contentIntent);
+
+                Notification notification = mBuilder.build();
+
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                mNotificationManager.notify(NOTIFICATION_ID, notification);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
