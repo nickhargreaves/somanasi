@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +14,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
@@ -26,6 +30,8 @@ import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -59,6 +65,12 @@ public class MessagesFragment extends Fragment {
     private TextView notification;
     private SharedPreferences pref;
     private String user_id;
+    private static final String USER_ID = "user_id";
+    private static final String USER_NAME = "user_name";
+
+    private MenuItem friendIcon = null;
+    private Drawable friendDrawable;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
@@ -93,16 +105,112 @@ public class MessagesFragment extends Fragment {
     }
 
 
-    public MessagesFragment newInstance(int sectionNumber) {
+    public static MessagesFragment newInstance(int sectionNumber, String _friend_id, String _friend_name) {
         MessagesFragment fragment = new MessagesFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putString(USER_ID, _friend_id);
+        args.putString(USER_NAME, _friend_name);
+
+        fragment.setHasOptionsMenu(true);
+
         fragment.setArguments(args);
         return fragment;
     }
 
+
     public MessagesFragment() {
+
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        menu.clear();
+
+        inflater.inflate(R.menu.friend, menu);
+
+        friendIcon = menu.getItem(0);
+
+        new setIcon().execute();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_message) {
+
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, FriendBooksFragment.newInstance(8, getArguments().getString(USER_ID), getArguments().getString(USER_NAME)))
+                    .commit();
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    class setIcon extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+        protected String doInBackground(String... args) {
+
+            String fid = getArguments().getString(USER_ID);
+            String image_value = "http://graph.facebook.com/"+fid+"/picture?type=normal";
+
+            Log.d("im", "im: " + image_value);
+
+            String final_image_value="";
+
+            try
+            {
+                URL obj = new URL(image_value);
+                URLConnection conn = obj.openConnection();
+                Map<String, List<String>> map = conn.getHeaderFields();
+
+                final_image_value = map.get("Location").toString();
+
+                final_image_value = final_image_value.replace("[", "");
+
+                final_image_value = final_image_value.replace("]", "");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                URL url = new URL(final_image_value);
+                InputStream is = url.openStream();
+                friendDrawable = Drawable.createFromStream(is, "src");
+
+            } catch (MalformedURLException e) {
+                // e.printStackTrace();
+            } catch (IOException e) {
+                // e.printStackTrace();
+            }
+
+            return null;
+        }
+        protected void onPostExecute(String file_url) {
+
+            if(friendIcon!=null){
+                friendIcon.setIcon(friendDrawable);
+            }
+
+        }
+    }
+
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
