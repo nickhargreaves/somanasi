@@ -76,7 +76,7 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     public List<NotificationGCM> getNotifications() {
         List<NotificationGCM> notificationsList = new ArrayList<NotificationGCM>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS;
+        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS + " WHERE " + COLUMN_TYPE + " !='4'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -97,6 +97,32 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     
     // return contact list
     return notificationsList;
+    }
+
+    public List<NotificationGCM> getMessages(String user_id) {
+        List<NotificationGCM> messagesList = new ArrayList<NotificationGCM>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS + " WHERE " + COLUMN_TYPE + " ='4' AND " + COLUMN_USER + " ='" + user_id + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                NotificationGCM content = new NotificationGCM();
+
+                content.setBook((cursor.getString(1)));
+                content.setMessage((cursor.getString(2)));
+                content.setUser((cursor.getString(3)));
+                content.setType((cursor.getString(4)));
+
+                messagesList.add(content);
+            } while (cursor.moveToNext());
+        }
+
+        // return messages as a list
+        return messagesList;
     }
 
 

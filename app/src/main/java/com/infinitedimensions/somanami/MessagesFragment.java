@@ -48,7 +48,7 @@ public class MessagesFragment extends Fragment {
     SimpleDBHandler dbHandler;
     private ArrayList<Card> cards;
     CardGridArrayAdapter mCardArrayAdapter;
-    List<NotificationGCM> notificationGCMList;
+    List<NotificationGCM> messagesList;
 
     private GifAnimationDrawable little;
 
@@ -79,10 +79,9 @@ public class MessagesFragment extends Fragment {
 
         dbHandler = new SimpleDBHandler(getActivity().getApplicationContext(), null, null, 1);
 
-        notificationGCMList = dbHandler.getNotifications();
+        messagesList = dbHandler.getMessages(getArguments().getString(USER_ID));
 
-
-        adClass = new ChatArrayAdapter(getActivity(), notificationGCMList);
+        adClass = new ChatArrayAdapter(getActivity(), messagesList);
         gridView.setAdapter(adClass);
 
 
@@ -110,9 +109,12 @@ public class MessagesFragment extends Fragment {
 
         NotificationGCM message = new NotificationGCM();
         message.setBook("sdfs");
-        message.setType("1");
+        message.setType("4");
         message.setMessage(message_text);
+        message.setUser(getArguments().getString(USER_ID));
 
+        dbHandler.addNotification(message);
+        
         chatText.setText("");
         adClass.add(message);
 
@@ -263,13 +265,13 @@ public class MessagesFragment extends Fragment {
             else
                 holder = (ViewHolder) convertView.getTag();
 
-            holder.message.setText(notificationGCMList.get(position).getMesage());
+            holder.message.setText(messagesList.get(position).getMesage());
 
             LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
             //check if it is a status message then remove background, and change text color.
 
             //Check whether message is mine to show green background and align to right
-            if(notificationGCMList.get(position).getType().equals("0"))
+            if(messagesList.get(position).getType().equals("0"))
             {
                 holder.message.setBackgroundResource(R.drawable.bubble_a);
                 lp.gravity = Gravity.RIGHT;
