@@ -72,13 +72,8 @@ public class MessagesFragment extends Fragment {
 
         notificationGCMList = dbHandler.getNotifications();
 
-        List<String> friend_names = new ArrayList<String>();
 
-        for(int i =0; i<notificationGCMList.size(); i++){
-            friend_names.add((notificationGCMList.get(i)).getMesage());
-        }
-
-        final AdapterClass2 adClass = new AdapterClass2(getActivity(), friend_names);
+        final AdapterClass2 adClass = new AdapterClass2(getActivity(), notificationGCMList);
 
 
         gridView.setAdapter(adClass);
@@ -201,11 +196,11 @@ public class MessagesFragment extends Fragment {
     }
 
 
-    public class AdapterClass2  extends ArrayAdapter<String> {
+    public class AdapterClass2  extends ArrayAdapter<NotificationGCM> {
         Context context;
-        private List<String> TextValue;
+        private List<NotificationGCM> TextValue;
 
-        public AdapterClass2(Context context, List<String> TextValue) {
+        public AdapterClass2(Context context, List<NotificationGCM> TextValue) {
             super(context, R.layout.drawer_list_footer_row, TextValue);
             this.context = context;
             this.TextValue= TextValue;
