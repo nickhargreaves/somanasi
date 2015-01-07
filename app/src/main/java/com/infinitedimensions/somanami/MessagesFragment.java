@@ -62,7 +62,7 @@ public class MessagesFragment extends Fragment {
 
     private EditText chatText;
     private ImageView buttonSend;
-
+    private ChatArrayAdapter adClass;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
@@ -82,22 +82,23 @@ public class MessagesFragment extends Fragment {
         notificationGCMList = dbHandler.getNotifications();
 
 
-        final AdapterClass2 adClass = new AdapterClass2(getActivity(), notificationGCMList);
+        adClass = new ChatArrayAdapter(getActivity(), notificationGCMList);
         gridView.setAdapter(adClass);
 
 
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    return sendChatMessage();
+                    return sendChatMessage("" + chatText.getText().toString());
                 }
                 return false;
             }
         });
+
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                sendChatMessage();
+                sendChatMessage("" + chatText.getText().toString());
             }
         });
 
@@ -105,11 +106,18 @@ public class MessagesFragment extends Fragment {
         return rootView;
     }
 
-    public boolean sendChatMessage(){
+    public boolean sendChatMessage(String message_text){
+
+        NotificationGCM message = new NotificationGCM();
+        message.setBook("sdfs");
+        message.setType("1");
+        message.setMessage(message_text);
+
+        chatText.setText("");
+        adClass.add(message);
 
         return true;
     }
-
 
     public static MessagesFragment newInstance(int sectionNumber, String _friend_id, String _friend_name) {
         MessagesFragment fragment = new MessagesFragment();
@@ -225,11 +233,11 @@ public class MessagesFragment extends Fragment {
     }
 
 
-    public class AdapterClass2  extends ArrayAdapter<NotificationGCM> {
+    public class ChatArrayAdapter  extends ArrayAdapter<NotificationGCM> {
         Context context;
         private List<NotificationGCM> TextValue;
 
-        public AdapterClass2(Context context, List<NotificationGCM> TextValue) {
+        public ChatArrayAdapter(Context context, List<NotificationGCM> TextValue) {
             super(context, R.layout.drawer_list_footer_row, TextValue);
             this.context = context;
             this.TextValue= TextValue;
