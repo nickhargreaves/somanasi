@@ -108,6 +108,8 @@ public class MessagesFragment extends Fragment {
 
     public boolean sendChatMessage(String message_text){
 
+        message_text = message_text.trim();
+
         Message message = new Message();
         message.setMessage(message_text);
         message.setUser(getArguments().getString(USER_ID));

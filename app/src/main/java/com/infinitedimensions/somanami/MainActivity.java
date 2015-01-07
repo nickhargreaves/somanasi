@@ -74,9 +74,9 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container, TrayFragment.newInstance(position))
                     .commit();
         }else{
-            if(getIntent().hasExtra("notifications")){
+            if(getIntent().hasExtra("note_type")){
                 //show notifications
-                getIntent().removeExtra("notifications");
+                getIntent().removeExtra("note_type");
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, NotificationsFragment.newInstance(9))
