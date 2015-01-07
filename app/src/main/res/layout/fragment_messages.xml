@@ -5,14 +5,14 @@
     android:orientation="vertical" >
 
     <ListView
-        android:id="@+id/listView2"
+        android:id="@+id/messagesList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/form2">
+        android:layout_above="@+id/form">
     </ListView>
 
     <RelativeLayout
-        android:id="@+id/form2"
+        android:id="@+id/form"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
@@ -27,15 +27,15 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/buttonSend2"
-            android:background="@color/card_foreground_activated_kitkat"/>
+            android:layout_toLeftOf="@+id/buttonSend"
+            android:hint="Enter message to send"/>
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/send"
             android:text="Send"
-            android:id="@+id/buttonSend2"
+            android:id="@+id/buttonSend"
             android:layout_alignBottom="@+id/chatText"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
