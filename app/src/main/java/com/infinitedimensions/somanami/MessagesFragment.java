@@ -74,9 +74,9 @@ public class MessagesFragment extends Fragment {
 
 
         final AdapterClass2 adClass = new AdapterClass2(getActivity(), notificationGCMList);
-
-
         gridView.setAdapter(adClass);
+
+
 
         return rootView;
     }
