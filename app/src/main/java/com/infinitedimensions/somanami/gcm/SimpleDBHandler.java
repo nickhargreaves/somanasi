@@ -12,15 +12,17 @@ import java.util.List;
 public class SimpleDBHandler extends SQLiteOpenHelper {
 
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "somanami.db";
     public static final String TABLE_NOTIFICATIONS= "notifications";
+    public static final String TABLE_MESSAGES= "messages";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BOOK = "book";
     public static final String COLUMN_MESSAGE = "message";
     public static final String COLUMN_USER = "user";
     public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_IS_MINE = "is_mine";
 
     public SimpleDBHandler(Context context, String name,
                        SQLiteDatabase.CursorFactory factory, int version) {
@@ -38,11 +40,21 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
                 + COLUMN_TYPE + " TEXT"
                 + "); ";
         db.execSQL(CREATE_CONTENTS_TABLE);
+
+        String CREATE_MESSAGES_TABLE = "CREATE TABLE " +
+                TABLE_MESSAGES + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                + COLUMN_MESSAGE + " TEXT,"
+                + COLUMN_USER + " TEXT,"
+                + COLUMN_IS_MINE + " TEXT"
+                + "); ";
+        db.execSQL(CREATE_MESSAGES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         onCreate(db);
     }
     public void addNotification(NotificationGCM notification) {
@@ -61,6 +73,20 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addMessage(Message message) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_MESSAGE, message.getMessage());
+        values.put(COLUMN_USER, message.getUser());
+        values.put(COLUMN_IS_MINE , message.getIsMine());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.insert(TABLE_MESSAGES, null, values);
+        db.close();
+    }
+
     public int getTotalNotifications(){
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -76,7 +102,7 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     public List<NotificationGCM> getNotifications() {
         List<NotificationGCM> notificationsList = new ArrayList<NotificationGCM>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS + " WHERE " + COLUMN_TYPE + " !='4'";
+        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + COLUMN_ID + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -99,10 +125,10 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     return notificationsList;
     }
 
-    public List<NotificationGCM> getMessages(String user_id) {
-        List<NotificationGCM> messagesList = new ArrayList<NotificationGCM>();
+    public List<Message> getMessages(String user_id) {
+        List<Message> messagesList = new ArrayList<Message>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_NOTIFICATIONS + " WHERE " + COLUMN_TYPE + " ='4' AND " + COLUMN_USER + " ='" + user_id + "'";
+        String selectQuery = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + COLUMN_USER + " ='" + user_id + "' ORDER BY " + COLUMN_ID + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -110,12 +136,11 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                NotificationGCM content = new NotificationGCM();
+                Message content = new Message();
 
-                content.setBook((cursor.getString(1)));
-                content.setMessage((cursor.getString(2)));
-                content.setUser((cursor.getString(3)));
-                content.setType((cursor.getString(4)));
+                content.setMessage((cursor.getString(1)));
+                content.setUser((cursor.getString(2)));
+                content.setIsMine((cursor.getString(3)));
 
                 messagesList.add(content);
             } while (cursor.moveToNext());

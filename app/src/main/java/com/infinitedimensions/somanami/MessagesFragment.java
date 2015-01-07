@@ -25,7 +25,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.infinitedimensions.somanami.gcm.NotificationGCM;
+import com.infinitedimensions.somanami.gcm.Message;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class MessagesFragment extends Fragment {
     SimpleDBHandler dbHandler;
     private ArrayList<Card> cards;
     CardGridArrayAdapter mCardArrayAdapter;
-    List<NotificationGCM> messagesList;
+    List<Message> messagesList;
 
     private GifAnimationDrawable little;
 
@@ -107,13 +107,14 @@ public class MessagesFragment extends Fragment {
 
     public boolean sendChatMessage(String message_text){
 
-        NotificationGCM message = new NotificationGCM();
-        message.setBook("sdfs");
-        message.setType("4");
+        Message message = new Message();
         message.setMessage(message_text);
         message.setUser(getArguments().getString(USER_ID));
+        message.setIsMine("1");
 
-        dbHandler.addNotification(message);
+        dbHandler.addMessage(message);
+        
+        //new SendMessage(message).execute();
         
         chatText.setText("");
         adClass.add(message);
@@ -235,11 +236,11 @@ public class MessagesFragment extends Fragment {
     }
 
 
-    public class ChatArrayAdapter  extends ArrayAdapter<NotificationGCM> {
+    public class ChatArrayAdapter  extends ArrayAdapter<Message> {
         Context context;
-        private List<NotificationGCM> TextValue;
+        private List<Message> TextValue;
 
-        public ChatArrayAdapter(Context context, List<NotificationGCM> TextValue) {
+        public ChatArrayAdapter(Context context, List<Message> TextValue) {
             super(context, R.layout.drawer_list_footer_row, TextValue);
             this.context = context;
             this.TextValue= TextValue;
@@ -265,13 +266,13 @@ public class MessagesFragment extends Fragment {
             else
                 holder = (ViewHolder) convertView.getTag();
 
-            holder.message.setText(messagesList.get(position).getMesage());
+            holder.message.setText(messagesList.get(position).getMessage());
 
             LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
             //check if it is a status message then remove background, and change text color.
 
             //Check whether message is mine to show green background and align to right
-            if(messagesList.get(position).getType().equals("0"))
+            if(messagesList.get(position).getIsMine().equals("1"))
             {
                 holder.message.setBackgroundResource(R.drawable.bubble_a);
                 lp.gravity = Gravity.RIGHT;
