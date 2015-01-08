@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.infinitedimensions.somanami.gcm.NotificationGCM;
+import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.infinitedimensions.somanami.gcm.RespondRequest;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 import com.squareup.picasso.Picasso;

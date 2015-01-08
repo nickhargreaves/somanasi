@@ -1,4 +1,4 @@
-package com.infinitedimensions.somanami.gcm;
+package com.infinitedimensions.somanami.models;
 
 /**
  * Created by nick on 1/3/15.

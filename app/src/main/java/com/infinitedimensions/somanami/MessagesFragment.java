@@ -25,7 +25,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.infinitedimensions.somanami.gcm.Message;
+import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.gcm.SendMessage;
 import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
 

@@ -21,6 +21,7 @@ import com.infinitedimensions.somanami.GifAnimationDrawable;
 import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
 import com.infinitedimensions.somanami.RoundedImageView;
+import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
