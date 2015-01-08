@@ -1,7 +1,8 @@
-package com.infinitedimensions.somanami.gcm;
+package com.infinitedimensions.somanami.network;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.infinitedimensions.somanami.Defaults;
@@ -16,18 +17,18 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class RequestBook extends AsyncTask<Void, Void, String> {
+public class SendMessage extends AsyncTask<Void, Void, String> {
 
     private Context ctx;
-    private String owner;
-    private String user_id;
-    private String book_id;
+    private String sender;
+    private String recipient;
+    private String message;
 
-    public RequestBook(Context ctx, String owner, String user_id, String book_id){
+    public SendMessage(Context ctx, String _sender, String _recipient, String _message){
         this.ctx = ctx;
-        this.owner = owner;
-        this.user_id = user_id;
-        this.book_id = book_id;
+        this.sender = _sender;
+        this.recipient = _recipient;
+        this.message = _message;
     }
 
 
@@ -41,7 +42,8 @@ public class RequestBook extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... arg0) {
         URI url = null;
         try {
-            url = new URI(Defaults.API_URL + "public/request_book/" + owner + "/" + user_id + "/" + book_id);
+            url = new URI(Defaults.API_URL + "public/send_message/" + sender + "/" + recipient + "/" + message);
+            Log.d("url'", Defaults.API_URL + "public/send_message/" + "/" + sender + "/" + recipient + "/" + message);
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -65,6 +67,6 @@ public class RequestBook extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        Toast.makeText(ctx, "Request sent!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ctx, "Message sent!", Toast.LENGTH_SHORT).show();
     }
 }

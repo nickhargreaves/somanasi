@@ -26,8 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.infinitedimensions.somanami.models.Message;
-import com.infinitedimensions.somanami.gcm.SendMessage;
-import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
+import com.infinitedimensions.somanami.network.SendMessage;
+import com.infinitedimensions.somanami.network.SimpleDBHandler;
 
 import java.io.IOException;
 import java.io.InputStream;

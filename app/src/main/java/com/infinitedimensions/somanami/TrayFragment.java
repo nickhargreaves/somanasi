@@ -26,7 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.infinitedimensions.somanami.gcm.ReturnBook;
+import com.infinitedimensions.somanami.network.ReturnBook;
 import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.CirclePageIndicator;
 

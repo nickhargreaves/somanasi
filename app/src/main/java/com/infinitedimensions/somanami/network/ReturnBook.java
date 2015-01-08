@@ -1,4 +1,4 @@
-package com.infinitedimensions.somanami.gcm;
+package com.infinitedimensions.somanami.network;
 
 import android.content.Context;
 import android.os.AsyncTask;

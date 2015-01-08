@@ -28,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.infinitedimensions.somanami.gcm.RequestBook;
+import com.infinitedimensions.somanami.network.RequestBook;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;

@@ -21,8 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.infinitedimensions.somanami.models.NotificationGCM;
-import com.infinitedimensions.somanami.gcm.RespondRequest;
-import com.infinitedimensions.somanami.gcm.SimpleDBHandler;
+import com.infinitedimensions.somanami.network.RespondRequest;
+import com.infinitedimensions.somanami.network.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;

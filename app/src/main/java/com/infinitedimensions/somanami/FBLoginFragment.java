@@ -24,7 +24,7 @@ import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.infinitedimensions.somanami.gcm.RegisterApp;
+import com.infinitedimensions.somanami.network.RegisterApp;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
