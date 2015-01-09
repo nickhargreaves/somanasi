@@ -28,7 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.network.RequestBook;
+import com.infinitedimensions.somanami.network.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
@@ -85,7 +87,7 @@ public class LibraryFragment extends Fragment {
     CardGridView gridView;
 
     private int mStackLevel = 0;
-
+    SimpleDBHandler dbHandler;
     private SharedPreferences pref;
     private String user_id;
 
@@ -120,8 +122,21 @@ public class LibraryFragment extends Fragment {
 
         }
 
-        checkConditions();
+        dbHandler = new SimpleDBHandler(getActivity().getApplicationContext(), null, null, 1);
+        getBooks();
+        //checkConditions();
         return rootView;
+    }
+
+    public void getBooks(){
+
+        cards = new ArrayList<Card>();
+        contentList = new ArrayList<Book>();
+
+        contentList = dbHandler.getBooks();
+
+        displayBooks();
+
     }
 
     public void checkConditions(){
@@ -289,68 +304,72 @@ public class LibraryFragment extends Fragment {
         }
         protected void onPostExecute(String file_url) {
 
-            stackSize = contentList.size();
-
-            if(stackSize==0){
-
-                Toast.makeText(getActivity().getApplicationContext(), "No items found!", Toast.LENGTH_SHORT).show();
-
-            }
-
-            for(int i = 0; i<contentList.size(); i++) {
-                //get bookmark in list
-                final Book content = contentList.get(i);
-
-                //Create a Card
-                Card card = new Card(getActivity().getApplicationContext());
-
-
-                //Add thumbnail
-                CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), content.getThumb_url());
-
-                thumbnail.setExternalUsage(true);
-                //thumbnail.setUrlResource(content.getThumb_url());
-
-                card.addCardThumbnail(thumbnail);
-
-                //Listeners
-                card.setOnClickListener(new Card.OnCardClickListener() {
-                    @Override
-                    public void onClick(Card card, View view) {
-                        //show book in dialog
-                        //show book in dialog
-                        mStackLevel++;
-
-                        // DialogFragment.show() will take care of adding the fragment
-                        // in a transaction.  We also want to remove any currently showing
-                        // dialog, so make our own transaction and take care of that here.
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                        if (prev != null) {
-                            ft.remove(prev);
-                        }
-                        ft.addToBackStack(null);
-
-                        // Create and show the dialog.
-                        DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id, content.getOwnerName(), content.getId());
-
-                        newFragment.show(ft, "dialog");
-                    }
-                });
-
-                cards.add(card);
-            }
-            //array adapter
-            mCardArrayAdapter = new CardGridArrayAdapter(getActivity().getApplicationContext(),cards);
-
-            if (gridView!=null){
-                gridView.setAdapter(mCardArrayAdapter);
-            }
-
-            rlloading.setVisibility(View.GONE);
-            gridView.setVisibility(View.VISIBLE);
+            displayBooks();
 
         }
+    }
+
+    public void displayBooks(){
+        stackSize = contentList.size();
+
+        if(stackSize==0){
+
+            Toast.makeText(getActivity().getApplicationContext(), "No items found!", Toast.LENGTH_SHORT).show();
+
+        }
+
+        for(int i = 0; i<contentList.size(); i++) {
+            //get bookmark in list
+            final Book content = contentList.get(i);
+
+            //Create a Card
+            Card card = new Card(getActivity().getApplicationContext());
+
+
+            //Add thumbnail
+            CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), content.getThumb_url());
+
+            thumbnail.setExternalUsage(true);
+            //thumbnail.setUrlResource(content.getThumb_url());
+
+            card.addCardThumbnail(thumbnail);
+
+            //Listeners
+            card.setOnClickListener(new Card.OnCardClickListener() {
+                @Override
+                public void onClick(Card card, View view) {
+                    //show book in dialog
+                    //show book in dialog
+                    mStackLevel++;
+
+                    // DialogFragment.show() will take care of adding the fragment
+                    // in a transaction.  We also want to remove any currently showing
+                    // dialog, so make our own transaction and take care of that here.
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+
+                    // Create and show the dialog.
+                    DialogFragment newFragment = singleBookDialogFragment.newInstance(content.getTitle(), content.getDescription(), content.getAuthors(), content.getCategories(), content.getThumb_url(), content.getOwner(), user_id, content.getOwnerName(), content.getId());
+
+                    newFragment.show(ft, "dialog");
+                }
+            });
+
+            cards.add(card);
+        }
+        //array adapter
+        mCardArrayAdapter = new CardGridArrayAdapter(getActivity().getApplicationContext(),cards);
+
+        if (gridView!=null){
+            gridView.setAdapter(mCardArrayAdapter);
+        }
+
+        rlloading.setVisibility(View.GONE);
+        gridView.setVisibility(View.VISIBLE);
     }
 
     public static class singleBookDialogFragment extends DialogFragment {

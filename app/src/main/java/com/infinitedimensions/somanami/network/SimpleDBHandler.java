@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 
@@ -15,10 +16,12 @@ import java.util.List;
 public class SimpleDBHandler extends SQLiteOpenHelper {
 
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
+
     private static final String DATABASE_NAME = "somanami.db";
     public static final String TABLE_NOTIFICATIONS= "notifications";
     public static final String TABLE_MESSAGES= "messages";
+    public static final String TABLE_BOOKS = "books";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BOOK = "book";
@@ -26,6 +29,22 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_USER = "user";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_IS_MINE = "is_mine";
+
+    //book columns
+    private static final String COLUMN_BOOK_ID = "_book_id";
+    private static final String COLUMN_BOOK_THUMB = "_thumb_url";
+    private static final String COLUMN_BOOK_TITLE = "_title";
+    private static final String COLUMN_BOOK_DESCRIPTION = "_description";
+    private static final String COLUMN_BOOK_DATE = "_date";
+    private static final String COLUMN_BOOK_URL = "_url";
+    private static final String COLUMN_BOOK_OWNER = "_owner";
+    private static final String COLUMN_BOOK_OWNER_NAME = "_owner_name";
+    private static final String COLUMN_BOOK_PUBLISHER = "_publisher";
+    private static final String COLUMN_BOOK_GID = "_gid";
+    private static final String COLUMN_BOOK_AUTHORS = "_authors";
+    private static final String COLUMN_BOOK_PAGES = "_pages";
+    private static final String COLUMN_BOOK_CATEGORIES = "_categories";
+
 
     public SimpleDBHandler(Context context, String name,
                        SQLiteDatabase.CursorFactory factory, int version) {
@@ -52,6 +71,26 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
                 + COLUMN_IS_MINE + " TEXT"
                 + "); ";
         db.execSQL(CREATE_MESSAGES_TABLE);
+
+        String CREATE_BOOKS_TABLE = "CREATE TABLE " +
+                TABLE_BOOKS + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                + COLUMN_BOOK_ID + " TEXT,"
+                + COLUMN_BOOK_THUMB + " TEXT,"
+                + COLUMN_BOOK_TITLE + " TEXT,"
+                + COLUMN_BOOK_DESCRIPTION + " TEXT,"
+                + COLUMN_BOOK_DATE + " TEXT,"
+                + COLUMN_BOOK_URL + " TEXT,"
+                + COLUMN_BOOK_OWNER + " TEXT,"
+                + COLUMN_BOOK_OWNER_NAME + " TEXT,"
+                + COLUMN_BOOK_PUBLISHER + " TEXT,"
+                + COLUMN_BOOK_GID + " TEXT,"
+                + COLUMN_BOOK_AUTHORS + " TEXT,"
+                + COLUMN_BOOK_PAGES + " TEXT,"
+                + COLUMN_BOOK_CATEGORIES + " TEXT"
+                + "); ";
+        db.execSQL(CREATE_BOOKS_TABLE);
+
     }
 
     @Override
@@ -73,6 +112,31 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.insert(TABLE_NOTIFICATIONS, null, values);
+        db.close();
+    }
+
+    public void addBook(Book book) {
+
+        ContentValues values = new ContentValues();
+
+
+        values.put(COLUMN_BOOK_ID, book.getId());
+        values.put(COLUMN_BOOK_THUMB, book.getThumb_url());
+        values.put(COLUMN_BOOK_TITLE, book.getTitle());
+        values.put(COLUMN_BOOK_DESCRIPTION, book.getDescription());
+        values.put(COLUMN_BOOK_DATE, book.getDate());
+        values.put(COLUMN_BOOK_URL, book.getUrl());
+        values.put(COLUMN_BOOK_OWNER, book.getOwner());
+        values.put(COLUMN_BOOK_OWNER_NAME, book.getOwnerName());
+        values.put(COLUMN_BOOK_PUBLISHER, book.getPublisher());
+        values.put(COLUMN_BOOK_GID, book.getGid());
+        values.put(COLUMN_BOOK_AUTHORS, book.getAuthors());
+        values.put(COLUMN_BOOK_PAGES, book.getPages());
+        values.put(COLUMN_BOOK_CATEGORIES, book.getCategories());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.insert(TABLE_BOOKS, null, values);
         db.close();
     }
 
@@ -100,6 +164,53 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         mCount.close();
 
         return  count;
+    }
+    public boolean bookExists(String sid){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor mCount= db.rawQuery("select count(*) from " + TABLE_BOOKS + " where " + COLUMN_BOOK_ID + " ='" + sid + "'", null);
+        mCount.moveToFirst();
+        int count= mCount.getInt(0);
+        mCount.close();
+
+        if(count>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public List<Book> getBooks() {
+        List<Book> bookList = new ArrayList<Book>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_BOOKS + " ORDER BY " + COLUMN_ID + " DESC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Book content = new Book();
+
+                content.setId((cursor.getString(1)));
+                content.setThumb_url((cursor.getString(2)));
+                content.setTitle((cursor.getString(3)));
+                content.setDescription((cursor.getString(4)));
+                content.setDate((cursor.getString(5)));
+                content.setUrl((cursor.getString(6)));
+                content.setOwner((cursor.getString(7)));
+                content.setOwnerName((cursor.getString(8)));
+                content.setPublisher((cursor.getString(9)));
+                content.setGid((cursor.getString(10)));
+                content.setAuthors((cursor.getString(11)));
+                content.setPages((cursor.getString(12)));
+                content.setCategories((cursor.getString(13)));
+
+                bookList.add(content);
+            } while (cursor.moveToNext());
+        }
+        return bookList;
     }
 
     public List<NotificationGCM> getNotifications() {

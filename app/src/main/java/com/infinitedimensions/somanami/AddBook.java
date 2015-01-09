@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.infinitedimensions.somanami.models.Book;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;

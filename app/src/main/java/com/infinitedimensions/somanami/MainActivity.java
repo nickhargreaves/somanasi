@@ -1,6 +1,8 @@
 package com.infinitedimensions.somanami;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.facebook.AppEventsLogger;
 import com.facebook.Session;
+import com.infinitedimensions.somanami.network.SyncAlarm;
 
 
 public class MainActivity extends ActionBarActivity
@@ -45,7 +48,15 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        startAlarmService();
+    }
 
+    public void startAlarmService(){
+        AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getApplicationContext(), SyncAlarm.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        am.cancel(pendingIntent);
+        am.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class SyncAlarm extends BroadcastReceiver {
         cal.set(Calendar.HOUR_OF_DAY,  calendar.get(Calendar.HOUR_OF_DAY));
 
         // start service after an hour
-        cal.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 60);
+        cal.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) + 1);
         cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND));
         cal.set(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND));
         cal.set(Calendar.DATE, calendar.get(Calendar.DATE));
