@@ -51,7 +51,6 @@ public class LibraryFragment extends Fragment {
     SimpleDBHandler dbHandler;
     private SharedPreferences pref;
     private String user_id;
-    private int mStackLevel = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +73,7 @@ public class LibraryFragment extends Fragment {
         cards = new ArrayList<Card>();
         contentList = new ArrayList<Book>();
 
-        contentList = dbHandler.getBooks();
+        contentList = dbHandler.getBooks(null);
 
         displayBooks();
 
@@ -130,7 +129,6 @@ public class LibraryFragment extends Fragment {
                 public void onClick(Card card, View view) {
                     //show book in dialog
                     //show book in dialog
-                    mStackLevel++;
 
                     // DialogFragment.show() will take care of adding the fragment
                     // in a transaction.  We also want to remove any currently showing

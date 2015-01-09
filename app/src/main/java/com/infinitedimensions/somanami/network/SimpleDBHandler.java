@@ -180,10 +180,20 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
             return false;
         }
     }
-    public List<Book> getBooks() {
+    public List<Book> getBooks(String user) {
         List<Book> bookList = new ArrayList<Book>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_BOOKS + " ORDER BY " + COLUMN_ID + " DESC";
+
+        String selectQuery;
+
+        if(user==null){
+
+            selectQuery = "SELECT * FROM " + TABLE_BOOKS + " ORDER BY " + COLUMN_ID + " DESC";
+
+        }else{
+
+            selectQuery = "SELECT * FROM " + TABLE_BOOKS + " WHERE "+ COLUMN_BOOK_OWNER +" ='"+ user+"' ORDER BY " + COLUMN_ID + " DESC";
+
+        }
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
