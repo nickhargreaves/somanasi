@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.network.SendMessage;
-import com.infinitedimensions.somanami.network.SimpleDBHandler;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 
 import java.io.IOException;
 import java.io.InputStream;

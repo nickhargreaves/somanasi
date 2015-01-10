@@ -23,7 +23,7 @@ import android.widget.ToggleButton;
 import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.network.RequestBook;
-import com.infinitedimensions.somanami.network.SimpleDBHandler;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;

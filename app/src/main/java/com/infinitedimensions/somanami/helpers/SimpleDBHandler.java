@@ -1,4 +1,4 @@
-package com.infinitedimensions.somanami.network;
+package com.infinitedimensions.somanami.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.models.NotificationGCM;
+import com.infinitedimensions.somanami.models.TrayItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,14 @@ import java.util.List;
 public class SimpleDBHandler extends SQLiteOpenHelper {
 
 
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
 
     private static final String DATABASE_NAME = "somanami.db";
+
     public static final String TABLE_NOTIFICATIONS= "notifications";
     public static final String TABLE_MESSAGES= "messages";
     public static final String TABLE_BOOKS = "books";
+    public static final String TABLE_TRAY="tray";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BOOK = "book";
@@ -44,6 +47,17 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_BOOK_AUTHORS = "_authors";
     private static final String COLUMN_BOOK_PAGES = "_pages";
     private static final String COLUMN_BOOK_CATEGORIES = "_categories";
+
+    //tray columns
+    private static final String COLUMN_TRAY_ID = "_tray_id";
+    private static final String COLUMN_DATE_DUE = "_date_due";
+    private static final String COLUMN_BORROWED = "_borrowed";
+    private static final String COLUMN_LENT = "_lent";
+    private static final String COLUMN_PERSON_ID = "_person_id";
+    private static final String COLUMN_PERSON_NAME = "_person_name";
+    private static final String COLUMN_TRAY_BOOK_ID = "_book_id";
+    private static final String COLUMN_TRAY_BOOK_THUMB = "_book_thumb";
+    private static final String COLUMN_TRAY_BOOK_TITLE = "_book_title";
 
 
     public SimpleDBHandler(Context context, String name,
@@ -91,12 +105,29 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
                 + "); ";
         db.execSQL(CREATE_BOOKS_TABLE);
 
+        String CREATE_TRAY_TABLE = "CREATE TABLE " +
+                TABLE_TRAY + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                + COLUMN_TRAY_ID + " TEXT,"
+                + COLUMN_DATE_DUE + " TEXT,"
+                + COLUMN_BORROWED + " TEXT,"
+                + COLUMN_LENT + " TEXT,"
+                + COLUMN_PERSON_ID + " TEXT,"
+                + COLUMN_PERSON_NAME + " TEXT,"
+                + COLUMN_TRAY_BOOK_ID + " TEXT,"
+                + COLUMN_TRAY_BOOK_THUMB + " TEXT,"
+                + COLUMN_TRAY_BOOK_TITLE + " TEXT"
+                + "); ";
+        db.execSQL(CREATE_TRAY_TABLE);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAY);
         onCreate(db);
     }
     public void addNotification(NotificationGCM notification) {
@@ -154,6 +185,26 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addTrayItem(TrayItem trayItem) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_TRAY_ID, trayItem.getId());
+        values.put(COLUMN_DATE_DUE, trayItem.getDate_due());
+        values.put(COLUMN_BORROWED , trayItem.getBorrowed());
+        values.put(COLUMN_LENT , trayItem.getLent());
+        values.put(COLUMN_PERSON_ID , trayItem.getPerson_id());
+        values.put(COLUMN_PERSON_NAME, trayItem.getPerson_name());
+        values.put(COLUMN_TRAY_BOOK_ID , trayItem.getBook_id());
+        values.put(COLUMN_TRAY_BOOK_THUMB , trayItem.getBook_thumb());
+        values.put(COLUMN_TRAY_BOOK_TITLE , trayItem.getBook_title());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.insert(TABLE_TRAY, null, values);
+        db.close();
+    }
+
     public int getTotalNotifications(){
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -165,6 +216,7 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
 
         return  count;
     }
+
     public boolean bookExists(String sid){
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -180,6 +232,55 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    public boolean trayItemExists(String sid){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor mCount= db.rawQuery("select count(*) from " + TABLE_TRAY + " where " + COLUMN_TRAY_ID + " ='" + sid + "'", null);
+        mCount.moveToFirst();
+        int count= mCount.getInt(0);
+        mCount.close();
+
+        if(count>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public List<TrayItem> getTrayItems() {
+        List<TrayItem> bookList = new ArrayList<TrayItem>();
+
+        String selectQuery;
+
+        selectQuery = "SELECT * FROM " + TABLE_TRAY + " ORDER BY " + COLUMN_ID + " DESC";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                TrayItem content = new TrayItem();
+
+                content.setId((cursor.getString(1)));
+                content.setDate_due((cursor.getString(2)));
+                content.setBorrowed(cursor.getString(3));
+                content.setLent((cursor.getString(4)));
+                content.setPerson_id((cursor.getString(5)));
+                content.setPerson_name((cursor.getString(6)));
+                content.setBook_id((cursor.getString(7)));
+                content.setBook_thumb((cursor.getString(8)));
+                content.setBook_title((cursor.getString(9)));
+
+                bookList.add(content);
+            } while (cursor.moveToNext());
+        }
+        return bookList;
+    }
+
     public List<Book> getBooks(String user) {
         List<Book> bookList = new ArrayList<Book>();
 

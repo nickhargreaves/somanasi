@@ -24,7 +24,7 @@ import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.infinitedimensions.somanami.network.RespondRequest;
-import com.infinitedimensions.somanami.network.SimpleDBHandler;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;

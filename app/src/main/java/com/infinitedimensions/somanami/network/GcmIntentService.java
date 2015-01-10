@@ -17,6 +17,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 

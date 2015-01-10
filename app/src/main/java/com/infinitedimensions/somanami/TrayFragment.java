@@ -30,6 +30,7 @@ import com.infinitedimensions.somanami.helpers.ConnectionDetector;
 import com.infinitedimensions.somanami.helpers.GPSTracker;
 import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.helpers.RoundedImageView;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 import com.infinitedimensions.somanami.models.TrayItem;
 import com.infinitedimensions.somanami.network.ReturnBook;
 import com.squareup.picasso.Picasso;
@@ -90,7 +91,7 @@ public class TrayFragment extends Fragment {
     String user_id = "0";
 
     private int mStackLevel = 0;
-
+    SimpleDBHandler dbHandler;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
@@ -123,8 +124,8 @@ public class TrayFragment extends Fragment {
         }catch(IOException ioe){
 
         }
-
-        checkConditions(rootView);
+        dbHandler = new SimpleDBHandler(getActivity().getApplicationContext(), null, null, 1);
+        getTray(rootView);
         return rootView;
     }
 
@@ -250,6 +251,7 @@ public class TrayFragment extends Fragment {
         }
 
     }
+
     public static class allowLocationDialog extends DialogFragment {
 
         @Override
@@ -293,7 +295,16 @@ public class TrayFragment extends Fragment {
                 getArguments().getInt(ARG_SECTION_NUMBER), "");
     }
 
+    public void getTray(View rootview){
 
+        cards = new ArrayList<Card>();
+        contentList = new ArrayList<TrayItem>();
+
+        contentList = dbHandler.getTrayItems();
+
+        setUpTrayList(rootview);
+
+    }
     private void setUpTrayList (View rootview)
     {
         gridView.setVisibility(View.VISIBLE);
