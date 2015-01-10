@@ -24,6 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.infinitedimensions.somanami.helpers.ConnectionDetector;
+import com.infinitedimensions.somanami.helpers.GPSTracker;
+import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.network.RequestBook;
 import com.infinitedimensions.somanami.network.SimpleDBHandler;
@@ -115,7 +118,6 @@ public class FriendBooksFragment extends Fragment {
 
             //Create a Card
             Card card = new Card(getActivity().getApplicationContext());
-
 
             //Add thumbnail
             CustomThumbCard thumbnail = new CustomThumbCard(getActivity().getApplicationContext(), content.getThumb_url());

@@ -1,4 +1,4 @@
-package com.infinitedimensions.somanami;
+package com.infinitedimensions.somanami.models;
 
 
 import org.codehaus.jackson.JsonParseException;

@@ -1,8 +1,10 @@
-package com.infinitedimensions.somanami;
+package com.infinitedimensions.somanami.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
+
+import com.infinitedimensions.somanami.helpers.GifDecoder;
 
 import java.io.BufferedInputStream;
 import java.io.File;

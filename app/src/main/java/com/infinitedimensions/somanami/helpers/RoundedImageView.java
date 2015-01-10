@@ -1,4 +1,4 @@
-package com.infinitedimensions.somanami;
+package com.infinitedimensions.somanami.helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;

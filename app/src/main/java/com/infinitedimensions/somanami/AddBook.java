@@ -24,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.infinitedimensions.somanami.helpers.ConnectionDetector;
+import com.infinitedimensions.somanami.helpers.GPSTracker;
+import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.models.Book;
 import com.squareup.picasso.Picasso;
 

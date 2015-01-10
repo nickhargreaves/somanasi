@@ -17,10 +17,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.infinitedimensions.somanami.GifAnimationDrawable;
+import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.MainActivity;
 import com.infinitedimensions.somanami.R;
-import com.infinitedimensions.somanami.RoundedImageView;
+import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.squareup.picasso.Picasso;
 

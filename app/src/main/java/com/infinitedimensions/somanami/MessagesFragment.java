@@ -25,6 +25,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.network.SendMessage;
 import com.infinitedimensions.somanami.network.SimpleDBHandler;

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.network.RequestBook;
 import com.infinitedimensions.somanami.network.SimpleDBHandler;

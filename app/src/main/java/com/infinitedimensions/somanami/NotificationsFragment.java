@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.infinitedimensions.somanami.helpers.GifAnimationDrawable;
+import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.infinitedimensions.somanami.network.RespondRequest;
 import com.infinitedimensions.somanami.network.SimpleDBHandler;

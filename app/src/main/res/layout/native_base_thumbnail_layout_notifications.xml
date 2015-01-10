@@ -17,7 +17,7 @@
   ~  *****************************************************************************
   -->
 
-<com.infinitedimensions.somanami.RoundedImageView
+<com.infinitedimensions.somanami.helpers.RoundedImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_thumbnail_image"
     android:src="@drawable/default_thumb"

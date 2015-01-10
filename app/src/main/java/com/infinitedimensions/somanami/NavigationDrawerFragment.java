@@ -43,6 +43,7 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.GraphObjectList;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
+import com.infinitedimensions.somanami.helpers.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;

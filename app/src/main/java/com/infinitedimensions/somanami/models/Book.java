@@ -39,13 +39,14 @@ public class Book {
     }
     public String getAuthors(){return this.authors;}
     public String getOwnerName(){return this.owner_name;}
-    public String getId(){return id;}
-    public String getTitle(){return title;}
-    public String getDescription(){return description;}
-    public String getPublisher(){return publisher;}
-    public String getGid(){return gid;}
-    public String getPages(){return pages;}
-    public String getCategories(){return categories;}
+    public String getId(){return this.id;}
+    public String getTitle(){return this.title;}
+    public String getDescription(){return this.description;}
+    public String getPublisher(){return this.publisher;}
+    public String getGid(){return this.gid;}
+    public String getPages(){return this.pages;}
+    public String getCategories(){return this.categories;}
+
     public void setId(String _id){
         this.id = _id;
     }

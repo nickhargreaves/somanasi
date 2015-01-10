@@ -39,7 +39,7 @@
                 android:id="@+id/ownerInfoLayout"
                 android:visibility="gone">
 
-                <com.infinitedimensions.somanami.RoundedImageView
+                <com.infinitedimensions.somanami.helpers.RoundedImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/ownerImage"

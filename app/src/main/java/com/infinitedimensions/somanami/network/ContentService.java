@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.infinitedimensions.somanami.ConnectionDetector;
+import com.infinitedimensions.somanami.helpers.ConnectionDetector;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.Defaults;
 
