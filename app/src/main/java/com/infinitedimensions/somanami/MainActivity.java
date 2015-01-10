@@ -65,6 +65,9 @@ public class MainActivity extends ActionBarActivity
         if (mNavigationDrawerFragment.isDrawerOpen()) {
             //
             mNavigationDrawerFragment.closeNavDrawer();
+        }else{
+
+            finish();
         }
     }
     @Override

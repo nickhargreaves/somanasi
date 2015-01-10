@@ -184,7 +184,7 @@ public class ContentService extends Service {
             for(int i = 0; i<contentList.size(); i++) {
 
                 Book b = contentList.get(i);
-                
+
                 if (!dbHandler.bookExists(b.getId())) {
                     //add book to db
                     dbHandler.addBook(b);
