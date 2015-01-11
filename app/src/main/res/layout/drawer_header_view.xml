@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@color/holoblue">
+    android:background="@color/white"
+    android:padding="10dp">
 
     <LinearLayout
         android:id="@+id/notificationsL"
@@ -15,8 +16,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:id="@+id/notificationsI"
             android:src="@drawable/notifications"
             android:tint="@color/material_blue_grey_800"
@@ -32,8 +33,8 @@
         android:id="@+id/settings">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:id="@+id/settingsI"
             android:src="@drawable/settings"
             android:tint="@color/material_blue_grey_800"
@@ -50,8 +51,8 @@
         android:id="@+id/logout">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:id="@+id/inviteI"
             android:src="@drawable/logout"
             android:tint="@color/material_blue_grey_800"

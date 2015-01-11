@@ -260,7 +260,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.addHeaderView(header, null, false);
     }
 
-    private void setUpFriendsList() {
+    public void setUpFriendsList() {
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -622,7 +622,6 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
     }
-
     private Request createRequest(Session session) {
         Request request = Request.newGraphPathRequest(session, "me/friends", null);
 
@@ -664,5 +663,4 @@ public class NavigationDrawerFragment extends Fragment {
         GraphObjectList<GraphObject> data = multiResult.getData();
         return data.castToListOf(GraphUser.class);
     }
-
 }

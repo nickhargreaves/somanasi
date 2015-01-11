@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -50,6 +52,8 @@ public class MainActivity extends ActionBarActivity
 
         startAlarmService();
     }
+
+
 
     public void startAlarmService(){
         AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -105,7 +109,6 @@ public class MainActivity extends ActionBarActivity
            }
 
         }
-
 
     }
     public void setActionBarTitle(String title){
