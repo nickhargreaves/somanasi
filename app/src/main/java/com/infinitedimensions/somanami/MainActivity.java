@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -33,11 +35,19 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
 
+    private SharedPreferences pref;
+
+    private SharedPreferences.Editor editor;
+
+    private String first_time;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        editor = pref.edit();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -50,7 +60,17 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        startAlarmService();
+
+        first_time = pref.getString("first_time", "1");
+
+        if(first_time.equals("1")){
+            startAlarmService();
+
+            editor.putString("first_time", "0");
+            editor.commit();
+        }
+        //first time to use app
+
     }
 
 
