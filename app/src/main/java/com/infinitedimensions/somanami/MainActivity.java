@@ -39,8 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -65,7 +64,7 @@ public class MainActivity extends ActionBarActivity
     private SimpleDBHandler dbHandler;
     SharedPreferences prefs;
     String user_id = "0";
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
