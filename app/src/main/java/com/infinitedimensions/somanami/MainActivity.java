@@ -1,8 +1,6 @@
 package com.infinitedimensions.somanami;
 
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,7 +23,6 @@ import com.infinitedimensions.somanami.helpers.ConnectionDetector;
 import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
 import com.infinitedimensions.somanami.models.Book;
 import com.infinitedimensions.somanami.models.TrayItem;
-import com.infinitedimensions.somanami.network.SyncAlarm;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -51,11 +48,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      */
     private CharSequence mTitle;
 
-    private SharedPreferences pref;
-
-    private SharedPreferences.Editor editor;
-
-    private String first_time;
 
     public List<Book> contentList;
     public List<TrayItem> trayList;
@@ -70,12 +62,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        editor = pref.edit();
-
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
 
         mTitle = getTitle();
 
@@ -83,16 +71,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        //first time to use app
-        first_time = pref.getString("first_time", "1");
-
-        if(first_time.equals("1")){
-            startAlarmService();
-
-            editor.putString("first_time", "0");
-            editor.commit();
-        }
 
         cd = new ConnectionDetector(getApplicationContext());
         //get Internet status
@@ -257,13 +235,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 
 
-    public void startAlarmService(){
-        AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplicationContext(), SyncAlarm.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        am.cancel(pendingIntent);
-        am.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
-    }
+
 
     @Override
     public void onBackPressed()

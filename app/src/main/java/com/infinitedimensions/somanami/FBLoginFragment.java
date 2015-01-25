@@ -166,14 +166,32 @@ public class FBLoginFragment extends Fragment {
                 regid = getRegistrationId(getActivity().getApplicationContext());
                 new RegisterApp(getActivity().getApplicationContext(), gcm, getAppVersion(getActivity().getApplicationContext())).execute();
             }
+            SharedPreferences prefs;
+            String first_time;
+
+            pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            editor = pref.edit();
+
+            //first time to use app
+            first_time = pref.getString("first_time", "1");
+            if(first_time.equals("1")){
+
+                Intent i = new Intent(getActivity(), FirstTimeActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(i);
+                getActivity().finish();
 
 
-            Intent i = new Intent(getActivity(), MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            getActivity().startActivity(i);
-            getActivity().finish();
+            }else{
+
+                Intent i = new Intent(getActivity(), MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                getActivity().startActivity(i);
+                getActivity().finish();
+
+            }
+
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
         }

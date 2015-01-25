@@ -27,6 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".FirstTimeActivity" />
         <activity android:name=".AddBook" />
         <activity android:name=".network.NotificationsActivity" android:label="Notifications"/>
         <activity
