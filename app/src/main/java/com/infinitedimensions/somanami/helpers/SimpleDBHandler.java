@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.infinitedimensions.somanami.models.Book;
+import com.infinitedimensions.somanami.models.Friend;
 import com.infinitedimensions.somanami.models.Message;
 import com.infinitedimensions.somanami.models.NotificationGCM;
 import com.infinitedimensions.somanami.models.TrayItem;
@@ -17,7 +18,7 @@ import java.util.List;
 public class SimpleDBHandler extends SQLiteOpenHelper {
 
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     private static final String DATABASE_NAME = "somanami.db";
 
@@ -25,6 +26,13 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     public static final String TABLE_MESSAGES= "messages";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_TRAY="tray";
+    public static final String TABLE_FRIENDS="friends";
+
+    //friends
+    private static final String COLUMN_FRIEND_ID = "_friend_id";
+    private static final String COLUMN_NAME = "_name";
+    private static final String COLUMN_EMAIL = "_email";
+    private static final String COLUMN_FID = "_fid";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_BOOK = "book";
@@ -120,6 +128,16 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
                 + "); ";
         db.execSQL(CREATE_TRAY_TABLE);
 
+        String CREATE_FRIENDS_TABLE = "CREATE TABLE " +
+                TABLE_FRIENDS + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                + COLUMN_FID + " TEXT,"
+                + COLUMN_NAME + " TEXT,"
+                + COLUMN_EMAIL + " TEXT,"
+                + COLUMN_FRIEND_ID + " TEXT"
+                + "); ";
+        db.execSQL(CREATE_FRIENDS_TABLE);
+
     }
 
     @Override
@@ -128,8 +146,25 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRAY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FRIENDS);
         onCreate(db);
     }
+    public void addFriends(Friend friend) {
+
+        ContentValues values = new ContentValues();
+
+
+        values.put(COLUMN_FRIEND_ID, friend.getId());
+        values.put(COLUMN_NAME, friend.getName());
+        values.put(COLUMN_EMAIL, friend.getEmail());
+        values.put(COLUMN_FID, friend.getFid());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.insert(TABLE_FRIENDS, null, values);
+        db.close();
+    }
+
     public void addNotification(NotificationGCM notification) {
 
         ContentValues values = new ContentValues();
@@ -348,6 +383,29 @@ public class SimpleDBHandler extends SQLiteOpenHelper {
     
     // return contact list
     return notificationsList;
+    }
+
+    public List<Friend> getFriends() {
+        List<Friend> friendsList = new ArrayList<Friend>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_FRIENDS + " ORDER BY " + COLUMN_ID + " DESC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Friend friend = new Friend();
+
+                friend.setFid((cursor.getString(1)));
+                friend.setName((cursor.getString(2)));
+
+                friendsList.add(friend);
+            } while (cursor.moveToNext());
+        }
+
+        return friendsList;
     }
 
     public List<Message> getMessages(String user_id) {

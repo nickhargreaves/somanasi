@@ -20,7 +20,6 @@
             android:layout_height="25dp"
             android:id="@+id/notificationsI"
             android:src="@drawable/notifications"
-            android:tint="@color/material_blue_grey_800"
             />
     </LinearLayout>
 
@@ -37,7 +36,6 @@
             android:layout_height="25dp"
             android:id="@+id/settingsI"
             android:src="@drawable/settings"
-            android:tint="@color/material_blue_grey_800"
             />
 
     </LinearLayout>
@@ -55,7 +53,6 @@
             android:layout_height="25dp"
             android:id="@+id/inviteI"
             android:src="@drawable/logout"
-            android:tint="@color/material_blue_grey_800"
             />
 
     </LinearLayout>

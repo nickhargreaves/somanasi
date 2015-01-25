@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -15,7 +16,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,25 +35,18 @@ import android.widget.Toast;
 
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.model.GraphMultiResult;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphObjectList;
-import com.facebook.model.GraphUser;
 import com.facebook.widget.WebDialog;
 import com.infinitedimensions.somanami.helpers.RoundedImageView;
+import com.infinitedimensions.somanami.helpers.SimpleDBHandler;
+import com.infinitedimensions.somanami.models.Friend;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -177,10 +170,8 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        //get friends
-        if(Session.getActiveSession()==null)
-            logout();
-        requestMyAppFacebookFriends(Session.getActiveSession());
+        //display friends
+        setUpFriendsList();
         /*
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
@@ -223,6 +214,15 @@ public class NavigationDrawerFragment extends Fragment {
 
         }
 
+        //set logged out
+        SharedPreferences pref;
+        SharedPreferences.Editor editor;
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        editor = pref.edit();
+        editor.putString("logged_in", "0");
+        editor.commit();
+
         Intent i = new Intent(context, FacebookLogin.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -261,6 +261,17 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void setUpFriendsList() {
+
+        SimpleDBHandler dbHandler = new SimpleDBHandler(getActionBar().getThemedContext(), null, null, 1);
+        List<Friend> friends = dbHandler.getFriends();
+
+        for(int i = 0; i<friends.size(); i++){
+
+            friend_ids.add(friends.get(i).getFid());
+
+            friend_names.add(friends.get(i).getName());
+        }
+
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -280,8 +291,6 @@ public class NavigationDrawerFragment extends Fragment {
         // Set up view
         View footer = (View) inflater.inflate(R.layout.drawer_list_footer_view,
                 mDrawerListView, false);
-
-
 
         int minHeight = 3*100;
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, minHeight);
@@ -373,12 +382,36 @@ public class NavigationDrawerFragment extends Fragment {
 
             String image_value = "http://graph.facebook.com/"+id+"/picture?type=normal";
 
-            Log.d("im", "im: " + image_value);
-
             RoundedImageView imv1 = (RoundedImageView)rowView.findViewById(R.id.roundendImageView);
 
             String final_image_value="";
 
+            new setPicture(image_value, final_image_value, imv1).execute();
+            return rowView;
+
+        }
+
+    }
+    class setPicture extends AsyncTask<String, String, String> {
+
+        String image_value;
+        String final_image_value;
+        RoundedImageView imv1;
+
+        public setPicture(String _image_value, String _final_image_value, RoundedImageView _imv1){
+            super();
+
+            this.image_value = _image_value;
+            this.final_image_value = _final_image_value;
+            this.imv1 = _imv1;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        protected String doInBackground(String... args) {
             try
             {
                 URL obj = new URL(image_value);
@@ -395,6 +428,10 @@ public class NavigationDrawerFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            return null;
+        }
+        protected void onPostExecute(String file_url) {
             if (final_image_value.trim().length() != 0) {
                 Picasso.with(getActivity())
                         .load(final_image_value)
@@ -402,12 +439,8 @@ public class NavigationDrawerFragment extends Fragment {
                         .error(R.drawable.cancel)
                         .into(imv1);
             }
-            return rowView;
-
         }
-
     }
-
 
     public class AdapterClass  extends ArrayAdapter<String> {
         Context context;
@@ -622,45 +655,6 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
     }
-    private Request createRequest(Session session) {
-        Request request = Request.newGraphPathRequest(session, "me/friends", null);
-
-        Set<String> fields = new HashSet<String>();
-        String[] requiredFields = new String[] { "id", "name", "picture",
-                "installed" };
-        fields.addAll(Arrays.asList(requiredFields));
-
-        Bundle parameters = request.getParameters();
-        parameters.putString("fields", TextUtils.join(",", fields));
-        request.setParameters(parameters);
-
-        return request;
-    }
-    private void requestMyAppFacebookFriends(Session session) {
-        Request friendsRequest = createRequest(session);
-        friendsRequest.setCallback(new Request.Callback() {
-
-            @Override
-            public void onCompleted(Response response) {
-                List<GraphUser> friends = getResults(response);
-
-                for (int i = 0; i < friends.size(); i++) {
-                    GraphUser user = friends.get(i);
-                    friend_names.add(user.getName());
-                    friend_ids.add(user.getId());
-                }
-
-                setUpFriendsList();
-            }
-        });
-        friendsRequest.executeAsync();
 
 
-    }
-    private List<GraphUser> getResults(Response response) {
-        GraphMultiResult multiResult = response
-                .getGraphObjectAs(GraphMultiResult.class);
-        GraphObjectList<GraphObject> data = multiResult.getData();
-        return data.castToListOf(GraphUser.class);
-    }
 }

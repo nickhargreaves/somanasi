@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -62,6 +63,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        checkCreds();
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
@@ -82,6 +91,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             //TODO
         }
 
+    }
+
+    public void checkCreds(){
+        SharedPreferences pref;
+        SharedPreferences.Editor editor;
+
+        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        String logged_in = pref.getString("logged_in", "0");
+        if(logged_in.equals("0")) {
+            Intent i = new Intent(getApplicationContext(), FacebookLogin.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     class getContent extends AsyncTask<String, String, String> {

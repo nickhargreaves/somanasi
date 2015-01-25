@@ -140,8 +140,6 @@ public class FBLoginFragment extends Fragment {
                         editor.putString("email", user.asMap().get("email").toString());
                         editor.commit();
 
-
-
                         url = Defaults.API_URL + "public/register/" + user.getId() + "/" + user.getFirstName() + "/" + user.getLastName() + "/" + user.asMap().get("email");
 
                         //if not registered, register here
@@ -183,6 +181,14 @@ public class FBLoginFragment extends Fragment {
 
 
             }else{
+                SharedPreferences pref;
+                SharedPreferences.Editor editor;
+
+                pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                //set as logged in
+                editor = pref.edit();
+                editor.putString("logged_in", "1");
+                editor.commit();
 
                 Intent i = new Intent(getActivity(), MainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
