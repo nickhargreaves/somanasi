@@ -10,7 +10,7 @@
 
     <item android:id="@+id/action_filter"
         android:title="@string/action_filter"
-        android:icon="@drawable/filter_light"
+        android:icon="@drawable/filter"
         android:orderInCategory="100"
         app:showAsAction="always" />
 </menu>
