@@ -323,7 +323,7 @@ public class FirstTimeActivity extends ActionBarActivity {
                 }
             }
         });
-        friendsRequest.executeAsync();
+        friendsRequest.executeAndWait();
     }
 
     private List<GraphUser> getResults(Response response) {
