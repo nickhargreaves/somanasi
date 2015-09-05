@@ -161,7 +161,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -194,42 +194,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         return mDrawerListView;
     }
-    public void logout(){
-        Context context = getActivity().getApplicationContext();
 
-        Session session = Session.getActiveSession();
-        if (session != null) {
-
-            if (!session.isClosed()) {
-                session.closeAndClearTokenInformation();
-                //clear your preferences if saved
-            }
-        } else {
-
-            session = new Session(context);
-            Session.setActiveSession(session);
-
-            session.closeAndClearTokenInformation();
-            //clear your preferences if saved
-
-        }
-
-        //set logged out
-        SharedPreferences pref;
-        SharedPreferences.Editor editor;
-        pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-
-        editor = pref.edit();
-        editor.putString("logged_in", "0");
-        editor.commit();
-
-        Intent i = new Intent(context, FacebookLogin.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        startActivity(i);
-
-        getActivity().finish();
-    }
 
     private void addDrawerHeader(){
         LayoutInflater inflater =  (LayoutInflater) getActionBar().getThemedContext()
@@ -306,7 +271,7 @@ public class NavigationDrawerFragment extends Fragment {
                 String friend_name = friend_names.get(position);
 
                 //close nav
-                    closeNavDrawer();
+                closeNavDrawer();
 
                 //open user's book list
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -345,7 +310,16 @@ public class NavigationDrawerFragment extends Fragment {
 
         }
 
-        Intent i = new Intent(getActivity(), FacebookLogin.class);
+        //set logged out
+        SharedPreferences pref;
+        SharedPreferences.Editor editor;
+        pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        editor = pref.edit();
+        editor.putString("logged_in", "0");
+        editor.commit();
+
+        Intent i = new Intent(context, FacebookLogin.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(i);
